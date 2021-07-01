@@ -10,6 +10,11 @@ $pattern = "/.*=([0-9]+)/i";
 preg_match($pattern, $actual_link, $re); 
 $id = $re[1];
 
+
+$sql = "SELECT * FROM usuario WHERE id = $id";
+$result = pg_query_params($dbconn, $sql, array());
+$row = pg_fetch_assoc($result);
+
 ?>
     <div class='container-fluid'>
         <div class="row p-3">
@@ -22,30 +27,30 @@ $id = $re[1];
                     <form action="CRUD/update.php" method="POST">
                         <div class="form-group">
                             <label for="name">Nombre</label>
-                            <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" required>
+                            <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="<?php echo $row['nombre']; ?>" required>
                         </div>
                         <div class="form-group">
                             <label for="surname">Apellido</label>
-                            <input name="apellido" type="text" class="form-control" placeholder="Apellido" id="surname">
+                            <input name="apellido" type="text" class="form-control" placeholder="Apellido" id="surname"  value="<?php echo $row['apellido']; ?>">
                         </div>
                         <div class="form-group">
                             <label for="email">Correo Electrónico</label>
-                            <input name="email" type="email" class="form-control" placeholder="correo@electronico.com" id="email" required>
+                            <input name="email" type="email" class="form-control" placeholder="correo@electronico.com" id="email" value="<?php echo $row['correo']; ?>" required>
                         </div>
                         <div class="form-group">
                             <label for="pwd">Contraseña</label>
-                            <input name="password" type="password" class="form-control" placeholder="Contraseña" id="pwd" required>
+                            <input name="password" type="password" class="form-control" placeholder="Contraseña" id="pwd">
                         </div>
                         <input type="hidden" name="id" value="<?php echo $id; ?>"/>
                         <!-- NOTA: Los valores están en duro para esta tarea. -->
                         <div class="form-group">
                             <label for="country">País</label>
-                            <select name="pais" class="form-control" id="country">
+                            <select name="pais" class="form-control" id="country" selected=2>
                                 <?php
                                 if( pg_num_rows($resultPAIS) > 0 ) {
-                                    while($row = pg_fetch_assoc($resultPAIS)) {
-                                        echo 
-                                        '<option value="' . $row["cod_pais"] .'">'. $row["nombre"]. '</option>';
+                                    while($row2 = pg_fetch_assoc($resultPAIS)) {
+                                        if ($row2["cod_pais"] != $row["pais"]) echo '<option value="' . $row["cod_pais"] .'">'. $row2["nombre"]. '</option>';
+                                        else echo '<option selected="' . $row["cod_pais"] .'" value="' . $row["cod_pais"] .'">'. $row2["nombre"]. '</option>';
                                     }
                                 }
                                 ?>

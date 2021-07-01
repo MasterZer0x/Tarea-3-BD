@@ -2,6 +2,9 @@
 include '../../../include/navbar.html';
 
 $opciones = array('cost'=>12);
+
+
+if ($_POST['password'] != '') {
 $pwd_hashed = password_hash($_POST['password'], PASSWORD_BCRYPT, $opciones);
 
 $sql = "UPDATE usuario SET "
@@ -11,13 +14,28 @@ $sql = "UPDATE usuario SET "
     . "contraseña='". $pwd_hashed . "', "
     . "pais=". $_POST['pais'] . ""
     . " WHERE id=". $_POST['id'];
+}
+else{
+    $sql = "UPDATE usuario SET "
+    . "nombre='". $_POST['nombre'] . "', "
+    . "apellido='". $_POST['apellido'] . "', "
+    . "correo='". $_POST['email'] . "', "
+    . "pais=". $_POST['pais'] . ""
+    . " WHERE id=". $_POST['id'];
+}
 
 
 
 $sql2 = "SELECT * FROM usuario WHERE correo='".$_POST['email']."'";
 $result = pg_query_params($dbconn, $sql2, array());
 $num_rows = pg_num_rows($result);
+$row = pg_fetch_assoc($result);
 
+// UPDATE
+
+
+
+// ---------------------
 
 
 echo"<html>";
@@ -43,8 +61,23 @@ if ($num_rows == 0) // Si no hay correos registrados
         echo '<h2 class="text-center text-danger">No se ha podido modificar al usuario.</h2>';
     }
     
-} else {
-    echo '<h2 class="text-center text-warning">Ya existe un usuario con el correo ingresado.</h2>';
+} elseif ($num_rows == 1){
+
+    if ($row['id'] == $_POST['id'])
+    {
+        $ejecucion = pg_query($dbconn, $sql);
+
+        if ($ejecucion)
+        {
+            echo '<h2 class="text-center text-success">Usuario Modificado correctamente.</h2>';
+        }
+        else{
+            echo '<h2 class="text-center text-danger">No se ha podido modificar al usuario.</h2>';
+        }
+    }
+    else{ echo '<h2 class="text-center text-danger">Ya existe una cuenta asociada a tal correo.</h2>';}
+} else{
+    echo '<h2 class="text-center text-danger">Existe mas de un usuario con el correo ingresado.</h2>';
 }
 
 echo '</div>';

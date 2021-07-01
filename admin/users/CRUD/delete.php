@@ -14,12 +14,40 @@ $revisarplata = pg_query_params($dbconn, $plata,array());
 
 
 if (pg_num_rows($revisarplata) != 0){
-    $text = "Usuario contiene monedas en su cuenta. Primero se debe vaciar su monedero antes de eliminar.";
-    $etiq = "danger";}
+
+    $sql = "DELETE FROM usuario_tiene_moneda WHERE id_usuario=".$id;
+    $ejecucion = pg_query($dbconn, $sql);
+
+    if ($ejecucion) // Si no hay correos registrados
+    {
+        $sql2 = "DELETE FROM cuenta_bancaria WHERE id_usuario=".$id;
+        $ejecucion2 = pg_query($dbconn, $sql2);
+    
+        $sql = "DELETE FROM usuario WHERE id=".$id;
+        $ejecucion = pg_query($dbconn, $sql);
+        if ($ejecucion  && $ejecucion2) // Si no hay correos registrados
+        {
+            $text = "Usuario tenia monedas. Eliminado correctamente.";
+            $etiq = "success";
+        } else {
+            $text = "Se han eliminado las monedas del usuario. Pero hubo un problema al eliminar al usuario.";
+            $etiq = "danger";
+        }    
+
+    } else {
+        $text = "Ha ocurrido un error al eliminar las monedas del usuario.";
+        $etiq = "danger";
+    }    
+
+
+}
 else{
+    $sql2 = "DELETE FROM cuenta_bancaria WHERE id_usuario=".$id;
+    $ejecucion2 = pg_query($dbconn, $sql2);
+
     $sql = "DELETE FROM usuario WHERE id=".$id;
     $ejecucion = pg_query($dbconn, $sql);
-    if ($ejecucion) // Si no hay correos registrados
+    if ($ejecucion && $ejecucion2) // Si no hay correos registrados
     {
         $text = "Usuario Eliminado correctamente.";
         $etiq = "success";
