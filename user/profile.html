@@ -1,0 +1,21 @@
+<?php include '../include/navbar.html'; ?>
+<?php include 'profile.php'; ?>
+    <div class='container-fluid'>
+        <div class="row p-3">
+            <h1>Mi Perfil</h1>
+        </div>
+        <div class="row p-3">
+            <div class="col">
+                <!-- Mostrar aquí los datos del usuario de la sesión -->
+                <div class="container shadow-lg rounded m-auto p-5">
+                    <p>Nombre Completo: <?php echo $_SESSION['nombre']." ". $_SESSION['apellido'];?> </p> 
+                    <p>Correo: <?php echo $_SESSION['email'];?> </p>
+                    <p>País: <?php echo $_SESSION['pais'];?>  </p>
+                    <p>Fecha de Ingreso: <?php echo $_SESSION['fecha_registro'];?> </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
