@@ -27,7 +27,7 @@
                 $result = pg_query_params($dbconn, $sql, array());
                 $nombre_pais = pg_fetch_result($result, 0);
 
-		$_SESSION["id"] = $row["id"];
+		        $_SESSION["id"] = $row["id"];
                 $_SESSION["nombre"] = $row["nombre"];
                 $_SESSION["apellido"] = $row["apellido"];
                 $_SESSION["pais"] = $nombre_pais;
@@ -38,10 +38,11 @@
                 echo "<script type='text/javascript'>document.location='/user/profile.html';</script>";
 
             } else {
-                
+                echo '<script>alert("Correo o Contraseña mal ingresados")</script>';
                 echo "<script type='text/javascript'>document.location='/sesion/log-in.html';</script>";
             }
         } else {
+            echo '<script>alert("Correo o Contraseña mal ingresados")</script>';
             echo "<script type='text/javascript'>document.location='/sesion/log-in.html';</script>";
         }}
     
