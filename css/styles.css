@@ -1,1 +1,32 @@
 /* Si quieren utilizar CSS personalizado para la tarea, utilicen este archivo */
+nav.navbar.navbar-expand-sm.bg-light {
+    background-color: #4c505d!important;
+}
+
+a {
+    color: #b6b8c5;
+}
+
+a:hover{
+    color: #fff;
+}
+
+body{
+    background-color: #f0f0f0;
+}
+
+.container.shadow-lg.rounded.m-auto.p-5 {
+    background-color: #fff;
+}
+.container-6.shadow-lg.rounded.m-auto.p-5 {
+    background-color: #fff;
+}
+
+.row.p-3 {
+    
+justify-content: center;
+
+}
+h1 {
+    color: #0079b9;
+}

@@ -17,7 +17,7 @@
         if ($pwd == $pwd2){
             $pwd_hashed = password_hash($pwd, PASSWORD_BCRYPT, $opciones);
 
-            $sqlcount = "SELECT COUNT(*)+1 as nextid FROM usuario";
+            $sqlcount = "SELECT MAX(id)+1 as nextid FROM usuario";
             $result = pg_query_params($dbconn, $sqlcount, array());
             $row = pg_fetch_array($result);
             $nextId = $row["nextid"];
@@ -38,7 +38,7 @@
                 $result = pg_query_params($dbconn, $sql, array());
                 $nombre_pais = pg_fetch_result($result, 0);
                 
-		$_SESSION["id"] = $nextId;
+		        $_SESSION["id"] = $nextId;
                 $_SESSION["email"] = $email;
                 $_SESSION["nombre"] = $nombre;
                 $_SESSION["apellido"] = $apellido;
