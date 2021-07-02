@@ -30,3 +30,7 @@ justify-content: center;
 h1 {
     color: #0079b9;
 }
+
+.custom {
+    width: 200px !important;
+}

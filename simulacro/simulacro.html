@@ -1,0 +1,113 @@
+<?php include '../include/navbar.html'; ?>
+
+<div class='container-fluid'>
+    <div class="row p-3">
+        <h1>SIMULACRO</h1>
+    </div>
+    <div class="row p-3">
+        <div class="col">
+            <!-- Mostrar aquí los datos de cada usuario -->
+            <div class="container shadow-lg rounded m-auto p-5">
+                <div class="row">
+                    <div class = "col-sm">
+                        <h2 style="text-align: center;">CRUD</h2>
+                        
+                        <?php 
+                        $array = [
+                            1 => "usuario",
+                            2 => "usuario_tiene_moneda",
+                            3 => "moneda",
+                            4 => "precio_moneda",
+                            5 => "pais",
+                            6 => "cuenta_bancaria",
+                        ];
+
+                        $counter = 1;
+                        
+                        
+                        for($rows = 1; $rows <= 3; $rows++){
+
+                            echo '<div class = "row ml-0 mr-0 mt-5 mb-5">';
+
+                                for($cols = 1; $cols <= 2; $cols++)
+                                {
+                                    echo '<div class = "col-sm text-center"> <a href="/simulacro/';
+                                    echo $array[$counter];
+                                    echo '.html" class="btn btn-warning custom">';
+                                    echo $array[$counter];
+                                    echo '</a></div>';
+                                    $counter ++;
+                                }
+
+
+                            echo '</div>';
+
+                        }
+                        
+
+
+                        ?>
+
+                        
+                    </div>
+                    <div class = "col-sm">
+                        <h2 style="text-align: center;">Consultas</h2>
+
+                        <?php 
+                        $array = [
+                            1 => "Consulta1",
+                            2 => "Consulta2",
+                            3 => "Consulta3",
+                            4 => "Consulta4",
+                            5 => "Consulta5",
+                            6 => "Consulta6",
+                            7 => "Consulta7",
+                            8 => "Consulta8",
+                            9 => "Consulta9",
+                            10 => "Consulta10",
+                        ];
+
+                        $counter = 1;
+                        
+                        
+                        for($rows = 1; $rows <= 5; $rows++){
+
+                            echo '<div class = "row ml-0 mr-0 mt-5 mb-5">';
+
+                                for($cols = 1; $cols <= 2; $cols++)
+                                {
+                                    echo '<div class = "col-sm text-center"> <a href="/simulacro/';
+                                        echo $array[$counter];
+                                        echo '.html" class="btn btn-success custom">';
+                                        echo $array[$counter];
+                                        echo '</a></div>';
+                                        $counter ++;
+                                }
+
+
+                            echo '</div>';
+
+                        }
+                        
+
+
+                        ?>
+
+
+
+                    </div>
+                </div>
+
+                
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
