@@ -1,1 +1,7 @@
-# Tarea-3-BD
+# Tarea-3-BD. Grupo 16.
+
+Francisco Pizarro (201930019-9):
+
+Hola, desconozco si en estas iteraciones se descontará puntaje por atraso, de todas formas, lamento la hora a la que se envió el documento con la informacion del git, este retraso principalmente se debe no se habia hecho el CRUD solicitado, en un principio crei que mis compañeros lo harían, dado que por mi parte ya habia dejado listo el git, arreglado e incoporado la interfaz necesaria para las consultas y tablas de la bd, pero, como se puede intuir por este escrito, no lo realizaron (uno de ellos lo intento y no puedo, mientras que el otro no hizo presencia), razon por la cual me veo forzado a realizar esta iteracion por mi cuenta luego de entregado un lab de 140 y un certamen de OSI, intenté avanzar lo mas posible dentro del tiempo que tuve disponible (a partir de las 11:50 PM app. ademas, considerando que perdi un tiempo considerable con problemas con flask: los puertos que se habian abierto no se cerraban, haciendo que siempre se mostrará en pantalla la sesion de la primera ejecucion) pero aun asi quedaron cosas que se podrian incoporar y mejorar en el CRUD dado, pero debido al frio, la falta de sueño y el cansancio mental me encuentro incapacitado en terminar estas, notar que dejé varias comentadas en los TODO. Agradeceria, en caso de que se descuente puntaje por atraso la comprension y consideracion de la situacion recien mencionada.
+
+Queda como evidencia de lo anteriormente dicho el historial de las commits en el git.
