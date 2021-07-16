@@ -17,9 +17,10 @@
                 </li>';
 
                 // Solo los usuarios tienen billetera
+                if($_SESSION["rango"] != "admin"){
                 echo '<li class="nav-item">
                     <a class="nav-link" href="/user/wallet.html">Billetera</a>
-                </li>';
+                </li>';}
 
                 // Solo el admin puede revisar los usuarios 
                 
