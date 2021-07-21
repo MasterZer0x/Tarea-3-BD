@@ -43,7 +43,10 @@ def create_user():
 @app.route('/api/usuario', methods=['GET'])
 def get_users():
     users = [ user.json() for user in Usuario.query.all() ] 
-    return jsonify({'usuarios': users })
+    users_return = dict()
+    for user in users:
+        users_return[user['id']] = user
+    return jsonify(users_return)
 
 
 # UPDATE
@@ -91,7 +94,7 @@ def delete_user(id):
 def create_pais():
     json = request.get_json(force=True)
 
-    # TODO: No permitir que se asigne id_pais mediante API, si no hacerlo automaticamente
+    # TODO: No permitir que se asigne id_pais mediante API, erlo automaticamente
     # SOLO se puede crear si la id ya no está ocupada
     if None in (json.get('cod_pais'), json.get('nombre')):
         return jsonify({'message': 'El formato está mal'}), 400

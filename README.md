@@ -1,4 +1,4 @@
-# Tarea-3-BD. Grupo 16.
+# Tarea-3-BD
 
 Francisco Pizarro (201930019-9):
 

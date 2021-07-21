@@ -1,0 +1,146 @@
+<?php include '../include/navbar.html'; 
+
+
+function callAPI($method, $url, $data){
+    $curl = curl_init();
+    switch ($method){
+       case "POST":
+          curl_setopt($curl, CURLOPT_POST, 1);
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+          break;
+       case "GET":
+          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
+          break;
+        case "DELETE":
+          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
+          break;
+       default:
+          if ($data)
+             $url = sprintf("%s?%s", $url, http_build_query($data));
+    }
+    // OPTIONS:
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+       'APIKEY: 111111111111111111111',
+       'Content-Type: application/json',
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    // EXECUTE:
+    $result = curl_exec($curl);
+    if(!$result){die("Connection Failure");}
+    curl_close($curl);
+    return $result;
+ }
+
+
+$actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$url_components = parse_url($actual_link);
+
+$edit_user = 0;
+
+if ( array_key_exists("query", $url_components))
+{
+    parse_str($url_components['query'], $params);
+    if ( array_key_exists("edit_user", $params)){
+        $edit_user = $params['edit_user'];
+    }
+    if ( array_key_exists("delete_user", $params)){
+        $call = callAPI('DELETE', 'http://127.0.0.1:4996/api/usuario/'.$params['delete_user'], false);
+        if(is_array(json_decode($call, true)))
+        {
+            echo "Borrado";
+        }
+        else
+        {
+            echo "ERROR";
+        }
+    }
+}
+
+
+// Mostrar tabla con datos
+$make_call = callAPI('GET', 'http://127.0.0.1:4996/api/usuario', false);
+$response = json_decode($make_call, true);
+?>
+<body>
+
+
+
+<table style="width:100%" class="table table-hover  " >
+    <thead>
+        <tr style="color: rgb(0 121 185);">
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Correo</th>
+        <th>Contraseña</th>
+        <th>Fecha registro</th>
+        <th>CRUD</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($response as &$valor)
+        {
+            
+
+            if($valor['id'] != $edit_user)
+            {
+                echo '<tr>';
+                echo '<th class="align-middle">'.$valor['id'].'</th>';
+                echo '<th class="align-middle">'.$valor['nombre'].'</th>';   
+                echo '<th class="align-middle">'.$valor['apellido'].'</th>';   
+                echo '<th class="align-middle">'.$valor['correo'].'</th>';   
+                echo '<th class="align-middle">'.$valor['contrasena'].'</th>';   
+                echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
+                echo '<th class="align-middle"> <a href="./usuario.html?edit_user='.$valor['id'].'" class="btn btn-warning">Editar <i class="fas fa-edit"></i></a> 
+                        <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
+                    </th>';  
+                echo '</tr>';
+            }
+            else
+            {
+                echo '<tr class="table-info "> ';
+                echo '<th class="align-middle">'.$valor['id'].'</th>';
+                echo '<form>';
+                echo '<th class="align-middle"><div class="form-group mb-0">
+                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['nombre'].'" required>
+                    </div></th>';
+                echo '<th class="align-middle"><div class="form-group mb-0">
+                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['apellido'].'" required>
+                    </div></th>';
+                echo '<th class="align-middle"><div class="form-group mb-0">
+                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['correo'].'" required>
+                    </div></th>';
+                echo '<th class="align-middle"><div class="form-group mb-0">
+                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['contrasena'].'" required>
+                    </div></th>';
+                echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
+                echo '<th class="align-middle"> <a href="./usuario.html?edit_user='.$valor["id"].'" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></a> 
+                    <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>';
+                echo '</form>';
+                echo '</tr>';
+            }
+
+            
+
+
+        }
+
+        ?>
+        <tbody>
+  </table>
+
+
+  
+
+
+    </body>
+    
+    </html>

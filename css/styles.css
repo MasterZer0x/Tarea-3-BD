@@ -23,7 +23,6 @@ body{
 }
 
 .row.p-3 {
-    
 justify-content: center;
 
 }
@@ -32,5 +31,5 @@ h1 {
 }
 
 .custom {
-    width: 2px !important;
+    width: 190px !important;
 }
