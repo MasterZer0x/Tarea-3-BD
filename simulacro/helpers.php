@@ -1,8 +1,6 @@
 <?php
+include  'APICaller.php';
 
-// CONFIGURACION URL:PORT API
-
-$URL_API = "http://127.0.0.1:4996";
 
 // Funciones para crear ventanas de lo resultados
 function create_success_windows ($text)
@@ -12,8 +10,8 @@ function create_success_windows ($text)
     class="container w-25 shadow-lg rounded m-auto p-5 bg-success text-white text-center window_fadeout"
     style="position: fixed; z-index: 10; left: 50%; transform: translate(-50%, -30%);"
     > '.$button.''.$text.'</div>';
-
 }
+
 
 function create_danger_windows ($text)
 {
@@ -26,53 +24,8 @@ function create_danger_windows ($text)
 }
 
 
-// FUNCION PARA REALIZAR LAS CONSULTAS A LA API
-
-function callAPI($method, $url, $data){
-    $curl = curl_init();
-    switch ($method){
-        case "POST":
-            curl_setopt($curl, CURLOPT_POST, 1);
-            if ($data)
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-            break;
-        case "GET":
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-            if ($data)
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-            break;
-        case "PUT":
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-            if ($data)
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-            break;
-        case "DELETE":
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-            if ($data)
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-            break;
-        default:
-            if ($data)
-                $url = sprintf("%s?%s", $url, http_build_query($data));
-    }
-    // OPCIONES:
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-       'APIKEY: 111111111111111111111',
-       'Content-Type: application/json',
-    ));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    // EJECUTAR INSTRUCCION:
-    $result = curl_exec($curl);
-    if(!$result){die("Connection Failure");}
-    curl_close($curl);
-    return $result;
- }
-
 
 // Variables estandares para cualquier tabla
-
 $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 $url_components = parse_url($actual_link);
 $pattern = "/\/(?:.*\/)*(.*).html/";

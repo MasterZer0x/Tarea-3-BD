@@ -1,0 +1,65 @@
+<?php include '../include/navbar.html'; 
+include 'APICaller.php';
+
+$actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$url_components = parse_url($actual_link);
+?>
+
+<body>
+
+
+
+    <div class='container-fluid'>
+        <div class="row p-3">
+            <h1>Tabla: <?php parse_str($url_components['query'], $temp); echo $temp['parent_table']?> </h1>
+        </div>
+        <div class="row p-3">
+            <div class="col">
+                <div class="container shadow-lg rounded m-auto p-5">
+
+<?php
+if ( array_key_exists("query", $url_components))
+{
+    parse_str($url_components['query'], $params);
+    if ( array_key_exists("parent_table", $params) && array_key_exists("read_id", $params))
+    {
+        $api_params = $params['read_id'];
+        if ( array_key_exists("time", $params)) // Si se requieren parametros adicionales (aparte de parent_table y read_id)
+            {
+                $correct_time = str_replace(' ', '%20', $params['time']);
+                $api_params =  $correct_time . '/' .$params['read_id'];
+        }
+        $call = callAPI('GET', $URL_API.'/api/'.$params['parent_table'].'/'.$api_params, false);
+        $call_json = json_decode($call, true);
+        if(is_array($call_json))
+        {
+            $keys = array_keys($call_json);
+            echo '<table>';
+            foreach($keys as &$key)
+            {
+                echo '<tr><th class="h5 font-weight-bold">'.$key.'</th>
+                    <th class="h5">'.$call_json[$key].'</th></tr>';
+            }
+            echo '</table>';
+        }
+    }
+    else
+    {
+        echo '<h1>No se ha encontrado ninguna fila con tal id (o no se ha encontrado la tabla).</h1>';
+    }
+
+
+
+}
+?>
+
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+</body>
+</html>

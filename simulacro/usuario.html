@@ -4,7 +4,7 @@ include 'helpers.php';
 
 <body>
 
-<!---  IMPRIMIR TABLA DE DATOS ----->>
+<!---  IMPRIMIR TABLA DE DATOS ----->
 
 <table style="width:100%" class="table table-hover  " >
     <thead>
@@ -35,7 +35,9 @@ include 'helpers.php';
                 echo '<th class="align-middle">'.$valor['contrasena'].'</th>';   
                 echo '<th class="align-middle">'.$valor['pais'].'</th>';   
                 echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
-                echo '<th class="align-middle"> <a href="./usuario.html?to_edit='.$valor['id'].'" class="btn btn-warning a_button_standar">Editar <i class="fas fa-edit"></i></a> 
+                echo '<th class="align-middle"> 
+                        <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a> 
+                        <a href="./usuario.html?to_edit='.$valor['id'].'" class="btn btn-warning a_button_standar">Editar <i class="fas fa-edit"></i></a> 
                         <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
                     </th>';  
                 echo '</tr>';
@@ -63,8 +65,11 @@ include 'helpers.php';
                 echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
                 echo '</form>';
 
-                echo '<th class="align-middle"> <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
-                    <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a></th>';
+                echo '<th class="align-middle">
+                        <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                        <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
+                        <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                    </th>';
                 
                 echo '</tr>';
             }
