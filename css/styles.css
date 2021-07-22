@@ -33,3 +33,17 @@ h1 {
 .custom {
     width: 190px !important;
 }
+
+.a_button_standar {
+    width: 117.38px !important
+}
+
+.window_fadeout{
+    
+    -webkit-animation: fadeout 3s linear 2s normal forwards;
+}
+
+@-webkit-keyframes fadeout{
+    from { opacity: 1; }
+    to { opacity: 0; visibility:hidden;}
+}

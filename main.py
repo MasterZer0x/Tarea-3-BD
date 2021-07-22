@@ -47,11 +47,20 @@ def get_users():
     for user in users:
         users_return[user['id']] = user
     return jsonify(users_return)
+    
+# READ 1 USER
+@app.route('/api/usuario/<id>', methods=['GET'])
+def get_user(id):
+    usuario = Usuario.query.filter_by(id=id).first()
+    if usuario is None:
+        return jsonify({'mensaje': 'El usuario no existe'}), 404
+    return usuario.json()
+
 
 
 # UPDATE
 @app.route('/api/usuario/<id>', methods=['PUT'])
-def uptade_user(id):
+def update_user(id):
     usuario = Usuario.query.filter_by(id=id).first()
     if usuario is None:
         return jsonify({'mensaje': 'El usuario no existe'}), 404
