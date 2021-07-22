@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
 db = SQLAlchemy()
 
@@ -22,9 +23,16 @@ class Usuario(db.Model):
 
 
     @classmethod
-    def create(cls, id, nombre, apellido, correo, contraseña, pais, fecha_registro):
-        user = Usuario(id=id,nombre=nombre,apellido=apellido,correo=correo,contraseña=contraseña,pais=pais,fecha_registro=fecha_registro )
-        return user.save()
+    def create(cls, nombre, apellido, correo, contraseña, pais):
+        res = db.session.query(func.max(Usuario.id).label('id')).one()
+        nid=res[0]+1
+        now = datetime.now()
+        fecha = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
+
+        user = Usuario(id=nid,nombre=nombre,apellido=apellido,correo=correo,contraseña=contraseña,pais=pais,fecha_registro=fecha)
+        temp = user.save()
+        print(temp)
+        return user
 
     def save(self):
         try:

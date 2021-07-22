@@ -1,191 +1,10 @@
 <?php include '../include/navbar.html'; 
-
-
-function create_success_windows ($text)
-{
-    $button = '<button id="close-window"  type="button" class="close" aria-label="Close"><span aria-hidden="true" style="position: fixed;left: 95%;top: 0%;">&times;</span></button>';
-    echo '<div id = "windows-inform"
-    class="container w-25 shadow-lg rounded m-auto p-5 bg-success text-white text-center window_fadeout"
-    style="position: fixed; z-index: 10; left: 50%; transform: translate(-50%, -30%);"
-    > '.$button.''.$text.'</div>';
-
-}
-
-function create_danger_windows ($text)
-{
-    $button = '<button id="close-window"  type="button" class="close" aria-label="Close"><span aria-hidden="true" style="position: fixed;left: 95%;top: 0%;">&times;</span></button>';
-    echo '<div id = "windows-inform"
-    class="container w-25 shadow-lg rounded m-auto p-5 bg-danger text-white text-center window_fadeout"
-    style="position: fixed; z-index: 10; left: 50%; transform: translate(-50%, -30%);"
-    > '.$button.''.$text.'</div>';
-
-}
-function callAPI($method, $url, $data){
-    $curl = curl_init();
-    switch ($method){
-       case "POST":
-          curl_setopt($curl, CURLOPT_POST, 1);
-          if ($data)
-             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-          break;
-       case "GET":
-          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-          if ($data)
-             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-          break;
-          case "PUT":
-          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-          if ($data)
-             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-          break;
-        case "DELETE":
-          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-          if ($data)
-             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-          break;
-       default:
-          if ($data)
-             $url = sprintf("%s?%s", $url, http_build_query($data));
-    }
-    // OPTIONS:
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-       'APIKEY: 111111111111111111111',
-       'Content-Type: application/json',
-    ));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    // EXECUTE:
-    $result = curl_exec($curl);
-    if(!$result){die("Connection Failure");}
-    curl_close($curl);
-    return $result;
- }
-
-
-$actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-$url_components = parse_url($actual_link);
-
-$to_edit = 0; // No hay usuario a modificar
-$update_id = 0;
-
-$borrado = 0; // No se ha eliminado a usuarios
-
-
-// Gestionar parametros
-if ( array_key_exists("query", $url_components))
-{
-    parse_str($url_components['query'], $params);
-    if ( array_key_exists("to_edit", $params)){
-        $to_edit = $params['to_edit'];
-    }
-
-
-    if ( array_key_exists("success", $params)){
-        $id_suc = $params['success'];
-        if($id_suc != 0)
-        {
-            create_success_windows("Se ha actualizado el registro del usuario con id ".$id_suc." asociada.");
-        }
-
-    }
-
-
-    if ( array_key_exists("delete_user", $params)){
-        $call = callAPI('DELETE', 'http://127.0.0.1:4996/api/usuario/'.$params['delete_user'], false);
-        if(is_array(json_decode($call, true)))
-        {
-            $borrado = 1; // Se ha borrado un usuario
-        }
-        else
-        {
-            $borrado = 2; // Error al eliminar
-        }
-    }
-}
-
-
-// Mostrar tabla con datos
-$make_call = callAPI('GET', 'http://127.0.0.1:4996/api/usuario', false);
-$response = json_decode($make_call, true);
+include 'helpers.php';
 ?>
+
 <body>
 
-
-
-<?php 
-
-
-
-
-
-$button = '<button id="close-window"  type="button" class="close" aria-label="Close"><span aria-hidden="true" style="position: fixed;left: 95%;top: 0%;">&times;</span></button>';
-if ($borrado == 1)
-{
-    echo '<div id = "windows-inform"
-            class="container w-25 shadow-lg rounded m-auto p-5 bg-success text-white text-center window_fadeout"
-            style="position: fixed; z-index: 10; left: 50%; transform: translate(-50%, -30%);"
-            > '.$button.'Se ha eliminado satisfactoriamente al usuario con id '.$params['delete_user'].' asociada.</div>';
-}
-elseif ($borrado == 2)
-{   
-    echo '<div id = "windows-inform"
-            class="container w-25 shadow-lg rounded m-auto p-5 bg-danger text-white text-center window_fadeout"
-            style="position: fixed; z-index: 10; left: 50%; transform: translate(-50%, -30%);"
-            > '.$button.'No se ha podido eliminar al usuario con id '.$params['delete_user'].'</div>';
-}
-
-
-
-if(isset($_POST['update_post'])){ //check if form was submitted
-    
-    $opciones = array('cost'=>12);
-    
-
-    $get_user = callAPI('GET', 'http://127.0.0.1:4996/api/usuario/'.$to_edit,  false);
-    $response_get = json_decode($get_user , true);
-
-    if ($_POST['contrasena'] == $response_get['contrasena'])
-    {
-        $pwd_hashed = $_POST['contrasena'];
-    }
-    else{
-        $pwd_hashed = password_hash($_POST['contrasena'], PASSWORD_BCRYPT, $opciones);
-    }
-    
-
-    $data = array(  
-        'nombre' => $_POST['nombre'], 
-        'apellido' => $_POST['apellido'], 
-        'correo' => $_POST['correo'], 
-        'contrasena' => $pwd_hashed, 
-        'pais' => $_POST['pais']
-        );
-
-    $call_put = callAPI('PUT', 'http://127.0.0.1:4996/api/usuario/'.$to_edit,  json_encode($data));
-    $response_put = json_decode($call_put , true);
-    if(is_array($response_put)) // si hay respuesta
-    {
-        header("Location: http://localhost/simulacro/usuario.html?success=".$to_edit);
-    }
-    else
-    {
-        create_danger_windows("Ha habido un error al actualizar al usuario ".$to_edit);
-    }
-
-  }   
-
-
-?>
-
-
-
-
-
-<script type="text/javascript">
-document.getElementById("close-window").onclick = function () { document.getElementById("windows-inform").style.display = "none"; };
-</script>
-
+<!---  IMPRIMIR TABLA DE DATOS ----->>
 
 <table style="width:100%" class="table table-hover  " >
     <thead>
@@ -206,7 +25,7 @@ document.getElementById("close-window").onclick = function () { document.getElem
         {
             
 
-            if($valor['id'] != $to_edit)
+            if($valor['id'] != $to_edit) // Si no fue seleccionado para editar
             {
                 echo '<tr>';
                 echo '<th class="align-middle">'.$valor['id'].'</th>';
@@ -221,7 +40,7 @@ document.getElementById("close-window").onclick = function () { document.getElem
                     </th>';  
                 echo '</tr>';
             }
-            else
+            else // Si fue seleccionado para editar
             {
                 echo '<tr class="table-info "> ';
                 echo '<th class="align-middle">'.$valor['id'].'</th>';
@@ -244,25 +63,75 @@ document.getElementById("close-window").onclick = function () { document.getElem
                 echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
                 echo '</form>';
 
-                echo '<th class="align-middle"> <button name="update_post" type="submit" id="update_post" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
+                echo '<th class="align-middle"> <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
                     <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a></th>';
                 
                 echo '</tr>';
             }
 
-
+            
         }
 
         ?>
-
+            
         
 
 
-        <tbody>
+    </tbody>
   </table>
 
+<!----  SECCION PARA CREATE---- -->
 
-  
+<h1 style="text-align: center;margin-top: 5rem;margin-bottom: 2rem;"> Crear usuario</h1>
+
+<table style="width:100%" class="table table-hover  " >
+    <thead>
+        <tr style="color: rgb(0 121 185);">
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Correo</th>
+        <th>Contraseña</th>
+        <th>Pais</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <form method="post"  id="create-user-form">
+        <th>
+            <div class="form-group mb-0">
+                <input name="nombre2" type="text" class="form-control" placeholder="Nombre" id="nombre2" required>
+            </div>
+        </th>
+        <th>
+            <div class="form-group mb-0">
+                <input name="ape" type="text" class="form-control" placeholder="Apellido" id="ape" >
+            </div>
+        </th>
+        <th>
+            <div class="form-group mb-0">
+                <input name="cor" type="email" class="form-control" placeholder="Correo" id="cor" required>
+            </div>
+        </th>
+        <th>
+            <div class="form-group mb-0">
+                <input name="cont" type="password" class="form-control" placeholder="Contraseña" id="cont" required>
+            </div>
+        </th>
+        <th>
+            <div class="form-group">
+                <input name="pais" type="text" class="form-control" placeholder="Pais" id="pais" required>
+            </div>
+        </th>
+        </form>
+        </tr>
+    </tbody>
+</table>
+
+<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-user-form" action="" class="btn btn-success">Crear usuario <i class="fas fa-edit"></i></button>
+</div>
+
+
+
 
 
     </body>

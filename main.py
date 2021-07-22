@@ -28,15 +28,13 @@ def index():
 @app.route('/api/usuario', methods=['POST'])
 def create_user():
     json = request.get_json(force=True)
-
-    # TODO: No permitir que se asigne id_usuario mediante API, si no hacerlo automaticamente
-
-    if None in (json.get('id'), json.get('nombre'), json.get('correo'), json.get('contrasena'), json.get('pais'), json.get('fecha_registro')):
+    
+    if None in (json.get('nombre'), json.get('correo'), json.get('contrasena'), json.get('pais')):
         return jsonify({'message': 'El formato está mal'}), 400
 
 
-    usuario = Usuario.create(json['id'], json['nombre'], json['apellido'], json['correo'], json['contrasena'], json['pais'], json['fecha_registro'])
-    return jsonify({'usuario': usuario.json() })
+    usuario = Usuario.create(json['nombre'], json['apellido'], json['correo'], json['contrasena'], json['pais'])
+    return jsonify({usuario.id:usuario.json()})
 
 
 # READ

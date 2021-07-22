@@ -47,3 +47,9 @@ h1 {
     from { opacity: 1; }
     to { opacity: 0; visibility:hidden;}
 }
+
+.custom-margin{
+
+margin-top: 1rem!important;
+margin-bottom: 1.5rem!important;
+}
