@@ -49,7 +49,7 @@ if ( array_key_exists("query", $url_components))
 {
     parse_str($url_components['query'], $params);
     if ( array_key_exists("edit_moneda", $params)){
-        $edit_user = $params['edit_moneda'];
+        $edit_moneda = $params['edit_moneda'];
     }
     if ( array_key_exists("delete_moneda", $params)){
         $call = callAPI('DELETE', 'https://127.0.0.1:4996/api/moneda'.$params['delete_moneda'], false);
@@ -89,7 +89,7 @@ $response = json_decode($make_call, true);
         {
             
 
-            if($valor['id'] != $edit_user)
+            if($valor['id'] != $edit_moneda)
             {
                 echo '<tr>';
                 echo '<th class="align-middle">'.$valor['id'].'</th>';
