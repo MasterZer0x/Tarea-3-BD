@@ -1,0 +1,135 @@
+<?php include '../include/navbar.html'; 
+
+
+
+function callAPI($method, $url, $data){
+    $curl = curl_init();
+    switch ($method){
+       case "POST":
+          curl_setopt($curl, CURLOPT_POST, 1);
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+          break;
+       case "GET":
+          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
+          break;
+        case "DELETE":
+          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
+          break;
+       default:
+          if ($data)
+             $url = sprintf("%s?%s", $url, http_build_query($data));
+    }
+    // OPTIONS:
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+       'APIKEY: 111111111111111111111',
+       'Content-Type: application/json',
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    // EXECUTE:
+    $result = curl_exec($curl);
+    if(!$result){die("Connection Failure");}
+    curl_close($curl);
+    return $result;
+ }
+
+
+$actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$url_components = parse_url($actual_link);
+
+$edit_usuario = 0;
+$edit_moneda = 0;
+
+if ( array_key_exists("query", $url_components))
+{
+    parse_str($url_components['query'], $params);
+    if ( array_key_exists("edit_usuario", $params) && array_key_exists("edit_moneda", $params)){
+        $edit_usuario = $params['edit_usuario'];
+        $edit_moneda = $params['edit_moneda'];
+    }
+    if ( array_key_exists("delete_usuario_tiene_moneda", $params)){
+        $call = callAPI('DELETE', 'https://127.0.0.1:4996/api/usuario_tiene_moneda'.$params['delete_moneda'], false);
+        if(is_array(json_decode($call, true)))
+        {
+            echo "Borrado";
+        }
+        else
+        {
+            echo "ERROR";
+        }
+    }
+}
+
+
+// Mostrar tabla con datos
+$make_call = callAPI('GET', 'http://127.0.0.1:4996/api/usuario_tiene_moneda', false);
+$response = json_decode($make_call, true);
+?>
+<body>
+
+
+
+<table style="width:100%" class="table table-hover  " >
+    <thead>
+        <tr style="color: rgb(0 121 185);">
+        <th>ID Usuario</th>
+        <th>ID Moneda</th>
+        <th>Balance</th>
+        <th>CRUD</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $monedasdelusuario = $response['usuario_tiene_monedas'];
+        foreach ($monedasdelusuario as &$valor)
+        {
+            
+
+            if($valor['id_usuario'] != $edit_usuario && $valor['id_moneda'] != $edit_moneda)
+            {
+                echo '<tr>';
+                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
+                echo '<th class="align-middle">'.$valor['id_moneda'].'</th>';   
+                echo '<th class="align-middle">'.$valor['balance'].'</th>';   
+                echo '<th class="align-middle"> <a href="./usuario_tiene_moneda.html?edit_usuario='.$valor['id_usuario'].'&edit_moneda='.$valor['id_moneda'].'" class="btn btn-warning">Editar <i class="fas fa-edit"></i></a> 
+                        <a href="./usuario_tiene_moneda.html?delete_usuario_tiene_moneda='.$valor['id_usuario'].'&'.$valor['id_moneda'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
+                    </th>';  
+                echo '</tr>';
+            }
+            else if ($valor['id_usuario'] == $edit_usuario && $valor['id_moneda'] == $edit_moneda)
+            {
+                echo '<tr class="table-info "> ';
+                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
+                echo '<th class="align-middle">'.$valor['id_moneda'].'</th>';
+                echo '<form>';
+                echo '<th class="align-middle"><div class="form-group mb-0">
+                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['balance'].'" required>
+                    </div></th>';
+                echo '<th class="align-middle"> <a href="./usuario_tiene_moneda.html?edit_usuario='.$valor['id_usuario'].'&edit_moneda='.$valor['id_moneda'].'" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></a> 
+                    <a href="./usuario_tiene_moneda.html?delete_usuario_tiene_moneda='.$valor['id_usuario'].'&'.$valor['id_moneda'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>';
+                echo '</form>';
+                echo '</tr>';
+            }
+
+            
+
+
+        }
+
+        ?>
+        <tbody>
+  </table>
+
+
+  
+
+
+    </body>
+    
+    </html>
