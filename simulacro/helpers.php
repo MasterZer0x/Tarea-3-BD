@@ -34,23 +34,22 @@ $tablename = $temp[1];
 
 // Inicializacion identificadores de accion
 $to_edit = 0; // No hay id a modificar
-$second_edit = 0; // No hay id a modificar
 $update_id = 0;
-$borrado = 0; // No se ha eliminado a usuario
+$borrado = 0; // No se ha eliminado a usuarios
+
 
 // Gestionar parametros
 if ( array_key_exists("query", $url_components))
 {
     parse_str($url_components['query'], $params);
-
     if ( array_key_exists("to_edit", $params ) && !array_key_exists("second_edit", $params )){
         $to_edit = $params['to_edit'];
     }
-
     else if ( array_key_exists("to_edit", $params ) && array_key_exists("second_edit", $params )){
         $to_edit = $params['to_edit'];
         $second_edit = $params['second_edit'];
     }
+
     // Funciones que no requieren intrinsicamente de una estructura especifica.
 
     if ( array_key_exists("success", $params)){ // Si se accede a la actualizacion de un dato
@@ -148,12 +147,13 @@ function moneda_update_data($URL_API, $to_edit)
 
 // Estructura para actualizar y crear filas en las tablas
 if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
+    
     switch($tablename)
     {
         case "usuario":
             $data = usuario_update_data($URL_API, $to_edit);
             break;
-        case "moneda":
+	case "moneda":
             $data = moneda_update_data($URL_API, $to_edit);
             break;
         default :
@@ -183,10 +183,10 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
     switch($tablename)
     {
         case "usuario":
+	    $mensaje = "Ha habido un error al crear al usuario".$to_edit;
             $data = usuario_create_data($URL_API, $to_edit);
-            $mensaje = "Ha habido un error al crear al usuario".$to_edit;
             break;
-        case "moneda":
+	 case "moneda":
                 $data = moneda_create_data($URL_API, $to_edit);
                 $mensaje = "Ha habido un error al crear la moneda".$to_edit;
                 break;
@@ -196,6 +196,8 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
 
 
     }
+    
+   
 
     // Llamar a API con estructura dada (NO ES NECESARIO CAMBIAR ESTO)
     $call_post = callAPI('POST', 'http://127.0.0.1:4996/api/'.$tablename,  json_encode($data));

@@ -8,6 +8,8 @@ from models import Pais
 from models import Usuario
 from models import Moneda
 from flask import request
+from datetime import datetime
+from datetime import timedelta
 
 app = Flask(__name__)
 enviroment = config['development']
@@ -113,10 +115,18 @@ def create_pais():
 
 # READ
 @app.route('/api/pais', methods=['GET'])
-def get_pais():
+def get_paises():
     paises = [ pais.json() for pais in Pais.query.all() ] 
     return jsonify({'paises': paises })
 
+    
+# READ 1 PAIS
+@app.route('/api/pais/<id>', methods=['GET'])
+def get_pais(id):
+    pais = Pais.query.filter_by(cod_pais=id).first()
+    if pais is None:
+        return jsonify({'mensaje': 'El pais no existe'}), 404
+    return pais.json()
 
 # UPDATE
 @app.route('/api/pais/<id>', methods=['PUT'])
@@ -164,7 +174,7 @@ def create_moneda():
 
 
     moneda = Moneda.create(json['sigla'], json['nombre'])
-    return jsonify({moneda.id:moneda.json()})
+    return jsonify({moneda.id: moneda.json() })
 
 
 
@@ -175,13 +185,14 @@ def get_monedas():
     monedas = [ moneda.json() for moneda in Moneda.query.all() ] 
     return jsonify({'monedas': monedas })
 
-# READ 1 USER
+# READ 1 MONEDA
 @app.route('/api/moneda/<id>', methods=['GET'])
 def get_moneda(id):
     moneda = Moneda.query.filter_by(id=id).first()
     if moneda is None:
-        return jsonify({'mensaje': 'El usuario no existe'}), 404
+        return jsonify({'mensaje': 'La moneda no existe'}), 404
     return moneda.json()
+
 
 # UPDATE
 @app.route('/api/moneda/<id>', methods=['PUT'])
@@ -195,8 +206,6 @@ def update_moneda(id):
         return jsonify({'mensaje': 'Solicitud Incorrecta'}), 400
 
     # TODO: en caso de una de las 2 entradas vacias dejarlo como estaba antes.
-
-    print(json)
 
     moneda.sigla = json["sigla"]
     moneda.nombre = json["nombre"]
@@ -242,10 +251,18 @@ def create_cuenta_bancaria():
 
 # READ
 @app.route('/api/cuenta_bancaria', methods=['GET'])
-def get_cuenta_bancaria():
+def get_cuenta_bancarias():
     cuentas_bancarias = [ cuenta_bancaria.json() for cuenta_bancaria in CuentaBancaria.query.all() ] 
     return jsonify({'cuentas_bancarias': cuentas_bancarias })
 
+
+# READ 1 Cuenta
+@app.route('/api/cuenta_bancaria/<id>', methods=['GET'])
+def get_cuenta_bancaria(id):
+    cuenta_bancaria = CuentaBancaria.query.filter_by(numero_cuenta=id).first()
+    if cuenta_bancaria is None:
+        return jsonify({'mensaje': 'La cuenta bancaria no existe'}), 404
+    return cuenta_bancaria.json()
 
 
 # UPDATE
@@ -298,10 +315,22 @@ def create_precio_moneda():
 
 # READ
 @app.route('/api/precio_moneda', methods=['GET'])
-def get_precio_moneda():
+def get_precios_monedas():
     precios_monedas = [ precio_moneda.json() for precio_moneda in PrecioMoneda.query.all() ] 
     return jsonify({'precios_monedas': precios_monedas })
 
+# READ valor asociado a fecha y moneda
+@app.route('/api/precio_moneda/<fecha>/<id>', methods=['GET'])
+def get_precio_moneda(fecha,id):
+    # fecha_raw en formato "%a, %d %b %Y %H:%M:%S GMT"
+    date_time_obj = datetime.strptime(fecha, '%a, %d %b %Y %H:%M:%S %Z')
+    fecha_down = date_time_obj.strftime("%Y-%m-%d %H:%M:%S")
+    fecha_up = date_time_obj + timedelta(0,1)
+    fecha_up = fecha_up.strftime("%Y-%m-%d %H:%M:%S")
+    precio_moneda = PrecioMoneda.query.filter(PrecioMoneda.id_moneda ==id, PrecioMoneda.fecha >= fecha_down, PrecioMoneda.fecha < fecha_up ).first()
+    if precio_moneda is None:
+        return jsonify({'mensaje': 'La fecha de moneda no existe'}), 404
+    return precio_moneda.json()
 
 # UPDATE
 @app.route('/api/precio_moneda/<id>', methods=['PUT'])
@@ -356,16 +385,19 @@ def create_usuario_tiene_moneda():
 
 # READ
 @app.route('/api/usuario_tiene_moneda', methods=['GET'])
-def get_usuario_tiene_monedas():
+def get_usuarios_tiene_monedas():
     usuario_tiene_monedas = [ usuario_tiene_moneda.json() for usuario_tiene_moneda in UsuarioTieneMoneda.query.all() ] 
     return jsonify({'usuario_tiene_monedas': usuario_tiene_monedas })
 
-@app.route('/api/usuario_tiene_moneda/<id>&<id2>', methods=['GET'])
-def get_usuario_tiene_moneda(id, id2):
-    utm = UsuarioTieneMoneda.query.filter_by(id_usuario=id,id_moneda=id2).first()
-    if utm is None:
-        return jsonify({'mensaje': 'El usuario no existe'}), 404
-    return utm.json()
+
+# READ valor asociado a id_usuario e id_moneda
+@app.route('/api/usuario_tiene_moneda/<id_user>/<id_moneda>', methods=['GET'])
+def get_usuario_tiene_moneda(id_user,id_moneda):
+
+    usuario_tiene_moneda = UsuarioTieneMoneda.query.filter_by(id_usuario = id_user, id_moneda = id_moneda).first()
+    if usuario_tiene_moneda is None:
+        return jsonify({'mensaje': 'No existe un usuario asociado a tal cuenta'}), 404
+    return usuario_tiene_moneda.json()
 
 
 # UPDATE
@@ -397,6 +429,30 @@ def delete_usuario_tiene_moneda(id):
 
 	return jsonify({'usuario_tiene_moneda': usuario_tiene_moneda.json() })
 # --------------------------------------------------------------------------------------------
+
+#                                IMPLEMENTACION CONSULTAS SOLICITADAS
+
+# --------------------------------------------------------------------------------------------
+
+base_cons_dir = '/api/consultas/'
+
+@app.route(base_cons_dir+'1/<year>', methods=['GET'])
+def get_user_by_year(year):
+    # Año en formato %Y (4 digitos)
+    date_time_obj = datetime.strptime(year, '%Y') # String to datetime object
+    base_year_string = date_time_obj.strftime("%Y-%m-%d %H:%M:%S") # Formatear como año-00-00 00:00:00
+    next_year_obj = date_time_obj + timedelta(365) # Sumar 1 año al año dado
+    next_year_string = next_year_obj.strftime("%Y-%m-%d %H:%M:%S") # Formatear como año+1-00-00 00:00:00
+
+    users_filtered = Usuario.query.filter(Usuario.fecha_registro >= base_year_string, Usuario.fecha_registro < next_year_string)
+
+    usuarios = [ usuario.json() for usuario in users_filtered ] 
+    return jsonify(usuarios)
+
+    
+
+
+
 
 
 if __name__ == '__main__':

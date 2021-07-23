@@ -54,7 +54,7 @@ if ( array_key_exists("query", $url_components))
         $edit_moneda = $params['edit_moneda'];
     }
     if ( array_key_exists("delete_usuario_tiene_moneda", $params)){
-        $call = callAPI('DELETE', 'https://127.0.0.1:4996/api/usuario_tiene_moneda'.$params['delete_moneda'], false);
+        $call = callAPI('DELETE', 'https://127.0.0.1:4996/api/usuario_tiene_moneda'.$params['delete_usuario_tiene_moneda'], false);
         if(is_array(json_decode($call, true)))
         {
             echo "Borrado";
