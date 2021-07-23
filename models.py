@@ -170,7 +170,6 @@ class Moneda(db.Model):
 class CuentaBancaria(db.Model):
     __tablename__ = "cuenta_bancaria"
     numero_cuenta = db.Column(db.Integer, primary_key=True)
-    #id_usuario = db.relationship("Usuario", back_populates="parents",cascade="delete", ForeignKey("pais.cod_pais"))
     id_usuario = db.Column(db.Integer,  db.ForeignKey("usuario.id"), nullable=False) # TODO: Relacionar con tabla Usuario
     balance = db.Column(db.Float, nullable=False)
 
