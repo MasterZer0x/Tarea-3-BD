@@ -66,7 +66,7 @@ include 'helpers.php';
                 echo '</form>';
 
                 echo '<th class="align-middle">
-                        <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                        <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
                         <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
                         <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
                     </th>';
