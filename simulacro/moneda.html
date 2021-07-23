@@ -1,74 +1,6 @@
 <?php include '../include/navbar.html'; 
+include 'helpers.php'; ?>
 
-
-
-function callAPI($method, $url, $data){
-    $curl = curl_init();
-    switch ($method){
-       case "POST":
-          curl_setopt($curl, CURLOPT_POST, 1);
-          if ($data)
-             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-          break;
-       case "GET":
-          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-          if ($data)
-             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-          break;
-        case "DELETE":
-          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-          if ($data)
-             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
-          break;
-       default:
-          if ($data)
-             $url = sprintf("%s?%s", $url, http_build_query($data));
-    }
-    // OPTIONS:
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-       'APIKEY: 111111111111111111111',
-       'Content-Type: application/json',
-    ));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    // EXECUTE:
-    $result = curl_exec($curl);
-    if(!$result){die("Connection Failure");}
-    curl_close($curl);
-    return $result;
- }
-
-
-$actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-$url_components = parse_url($actual_link);
-
-$edit_moneda = 0;
-
-if ( array_key_exists("query", $url_components))
-{
-    parse_str($url_components['query'], $params);
-    if ( array_key_exists("edit_moneda", $params)){
-        $edit_moneda = $params['edit_moneda'];
-    }
-    if ( array_key_exists("delete_moneda", $params)){
-        $call = callAPI('DELETE', 'https://127.0.0.1:4996/api/moneda'.$params['delete_moneda'], false);
-        if(is_array(json_decode($call, true)))
-        {
-            echo "Borrado";
-        }
-        else
-        {
-            echo "ERROR";
-        }
-    }
-}
-
-
-// Mostrar tabla con datos
-$make_call = callAPI('GET', 'http://127.0.0.1:4996/api/moneda', false);
-$response = json_decode($make_call, true);
-?>
 <body>
 
 
@@ -77,7 +9,7 @@ $response = json_decode($make_call, true);
     <thead>
         <tr style="color: rgb(0 121 185);">
         <th>ID</th>
-        <th>Nombre</th>
+        <th>Nombre Moneda</th>
         <th>Sigla</th>
         <th>CRUD</th>
         </tr>
@@ -89,32 +21,39 @@ $response = json_decode($make_call, true);
         {
             
 
-            if($valor['id'] != $edit_moneda)
+            if($valor['id'] != $to_edit)
             {
                 echo '<tr>';
                 echo '<th class="align-middle">'.$valor['id'].'</th>';
                 echo '<th class="align-middle">'.$valor['nombre'].'</th>';   
-                echo '<th class="align-middle">'.$valor['sigla'].'</th>';   
-                echo '<th class="align-middle"> <a href="./moneda.html?edit_moneda='.$valor['id'].'" class="btn btn-warning">Editar <i class="fas fa-edit"></i></a> 
-                        <a href="./moneda.html?delete_moneda='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
-                    </th>';  
-                echo '</tr>';
+                echo '<th class="align-middle">'.$valor['sigla'].'</th>';
+                echo '<th class="align-middle"> 
+                    <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a> 
+                    <a href="./moneda.html?to_edit='.$valor['id'].'" class="btn btn-warning a_button_standar">Editar <i class="fas fa-edit"></i></a> 
+                    <a href="./moneda.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
+                </th>';  
+            echo '</tr>';
             }
             else
             {
                 echo '<tr class="table-info "> ';
-                echo '<th class="align-middle">'.$valor['id'].'</th>';
-                echo '<form>';
-                echo '<th class="align-middle"><div class="form-group mb-0">
-                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['nombre'].'" required>
-                    </div></th>';
-                echo '<th class="align-middle"><div class="form-group mb-0">
-                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['sigla'].'" required>
-                    </div></th>';
-                echo '<th class="align-middle"> <a href="./moneda.html?edit_moneda='.$valor["id"].'" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></a> 
-                    <a href="./moneda.html?delete_moneda='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>';
-                echo '</form>';
-                echo '</tr>';
+                    echo '<th class="align-middle">'.$valor['id'].'</th>';
+                    echo '<form method="post" id="form_update">';
+                    echo '<th class="align-middle"><div class="form-group mb-0">
+                            <input name="nom" type="text" class="form-control" placeholder="Nombre" id="nomb" value="'.$valor['nombre'].'" required>
+                        </div></th>';
+                    echo '<th class="align-middle"><div class="form-group mb-0">
+                            <input name="sig" type="text" class="form-control" placeholder="Sigla" id="sig" value="'.$valor['sigla'].'" required>
+                        </div></th>';
+                    echo '</form>';
+    
+                    echo '<th class="align-middle">
+                            <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
+                            <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
+                            <a href="./moneda.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                        </th>';
+                    
+                    echo '</tr>';
             }
 
             
@@ -128,6 +67,41 @@ $response = json_decode($make_call, true);
 
 
   
+<!----  SECCION PARA CREATE---- -->
+
+<h1 style="text-align: center;margin-top: 5rem;margin-bottom: 2rem;"> Agregar Moneda</h1>
+
+<table style="width:100%" class="table table-hover  " >
+    <thead>
+        <tr style="color: rgb(0 121 185);">
+            <th>Nombre Moneda</th>
+            <th>Sigla</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <form method="post"  id="create-user-form">
+
+        <th>
+            <div class="form-group mb-0">
+                <input name="nom" type="text" class="form-control" placeholder="Nombre" id="nom" required>
+            </div>
+        </th>
+        <th>
+            <div class="form-group mb-0">
+                <input name="sig" type="text" class="form-control" placeholder="Sigla" id="sig" required>
+            </div>
+        </th>
+        </form>
+        </tr>
+    </tbody>
+</table>
+
+<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-user-form" action="" class="btn btn-success">Agregar moneda <i class="fas fa-edit"></i></button>
+</div>
+
+
+
 
 
     </body>

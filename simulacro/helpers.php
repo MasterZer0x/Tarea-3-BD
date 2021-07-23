@@ -34,18 +34,23 @@ $tablename = $temp[1];
 
 // Inicializacion identificadores de accion
 $to_edit = 0; // No hay id a modificar
+$second_edit = 0; // No hay id a modificar
 $update_id = 0;
-$borrado = 0; // No se ha eliminado a usuarios
-
+$borrado = 0; // No se ha eliminado a usuario
 
 // Gestionar parametros
 if ( array_key_exists("query", $url_components))
 {
     parse_str($url_components['query'], $params);
-    if ( array_key_exists("to_edit", $params)){
+
+    if ( array_key_exists("to_edit", $params ) && !array_key_exists("second_edit", $params )){
         $to_edit = $params['to_edit'];
     }
 
+    else if ( array_key_exists("to_edit", $params ) && array_key_exists("second_edit", $params )){
+        $to_edit = $params['to_edit'];
+        $second_edit = $params['second_edit'];
+    }
     // Funciones que no requieren intrinsicamente de una estructura especifica.
 
     if ( array_key_exists("success", $params)){ // Si se accede a la actualizacion de un dato
@@ -115,14 +120,41 @@ function usuario_create_data($URL_API, $to_edit)
     return $data;
 }
 
+function moneda_create_data($URL_API, $to_edit)
+{
+
+    $data = array(  
+        'nombre' => $_POST['nom'], 
+        'sigla' => $_POST['sig'], 
+        );
+
+    return $data;
+}
+
+function moneda_update_data($URL_API, $to_edit)
+{
+
+    $get_moneda = callAPI('GET', $URL_API.'/api/moneda/'.$to_edit,  false);
+    $response_get = json_decode($get_moneda , true);
+
+    $data = array(  
+        'sigla' => $_POST['sig'], 
+        'nombre' => $_POST['nom']
+        );
+
+    return $data;
+}
+
 
 // Estructura para actualizar y crear filas en las tablas
 if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
-    
     switch($tablename)
     {
         case "usuario":
             $data = usuario_update_data($URL_API, $to_edit);
+            break;
+        case "moneda":
+            $data = moneda_update_data($URL_API, $to_edit);
             break;
         default :
             $data = array();
@@ -132,7 +164,7 @@ if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
     }
     
     // Llamar a API con estructura dada (NO ES NECESARIO CAMBIAR ESTO)
-    $call_put = callAPI('PUT', $URL_API.'/api/usuario/'.$to_edit,  json_encode($data));
+    $call_put = callAPI('PUT', $URL_API.'/api/'.$tablename.'/'.$to_edit,  json_encode($data));
     $response_put = json_decode($call_put , true);
     if(is_array($response_put)) // si hay respuesta
     {
@@ -152,26 +184,29 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
     {
         case "usuario":
             $data = usuario_create_data($URL_API, $to_edit);
+            $mensaje = "Ha habido un error al crear al usuario".$to_edit;
             break;
+        case "moneda":
+                $data = moneda_create_data($URL_API, $to_edit);
+                $mensaje = "Ha habido un error al crear la moneda".$to_edit;
+                break;
         default :
             $data = array();
             break;
 
 
     }
-    
-   
 
     // Llamar a API con estructura dada (NO ES NECESARIO CAMBIAR ESTO)
-    $call_post = callAPI('POST', 'http://127.0.0.1:4996/api/usuario',  json_encode($data));
+    $call_post = callAPI('POST', 'http://127.0.0.1:4996/api/'.$tablename,  json_encode($data));
     $response_post = json_decode($call_post , true);
     if(is_array($response_post)) // si hay respuesta
     {
-        header("Location: http://localhost/simulacro/usuario.html?success=".array_key_first($response_post));
+        header("Location: http://localhost/simulacro/".$tablename.".html?success=".array_key_first($response_post));
     }
     else
     {
-        create_danger_windows("Ha habido un error al crear al usuario ".$to_edit);
+        create_danger_windows($mensaje);
     }
 
   }  
