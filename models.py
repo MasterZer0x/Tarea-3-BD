@@ -119,9 +119,14 @@ class Moneda(db.Model):
     nombre = db.Column(db.String(80), nullable=False)
 
     @classmethod
-    def create(cls, id, sigla, nombre):
-        moneda = Moneda(id=id, sigla=sigla, nombre=nombre)
-        return moneda.save()
+    def create(cls, sigla, nombre):
+        res = db.session.query(func.max(Usuario.id).label('id')).one()
+        nid=res[0]+1
+        moneda = Moneda(id=nid, sigla=sigla, nombre=nombre)
+        temp = moneda.save()
+        print(temp)
+        return moneda
+
 
     def save(self):
         try:

@@ -159,23 +159,29 @@ def create_moneda():
     json = request.get_json(force=True)
 
     # TODO: No permitir que se asigne id_moneda mediante API, si no hacerlo automaticamente
-    if None in (json.get('id'), json.get('sigla'), json.get('nombre')):
+    if None in (json.get('sigla'), json.get('nombre')):
         return jsonify({'message': 'El formato está mal'}), 400
 
 
-    moneda = Moneda.create(json['id'], json['sigla'], json['nombre'])
-    return jsonify({'moneda': moneda.json() })
+    moneda = Moneda.create(json['sigla'], json['nombre'])
+    return jsonify({moneda.id:moneda.json()})
 
 
 
 
 # READ
 @app.route('/api/moneda', methods=['GET'])
-def get_moneda():
+def get_monedas():
     monedas = [ moneda.json() for moneda in Moneda.query.all() ] 
     return jsonify({'monedas': monedas })
 
-
+# READ 1 USER
+@app.route('/api/moneda/<id>', methods=['GET'])
+def get_moneda(id):
+    moneda = Moneda.query.filter_by(id=id).first()
+    if moneda is None:
+        return jsonify({'mensaje': 'El usuario no existe'}), 404
+    return moneda.json()
 
 # UPDATE
 @app.route('/api/moneda/<id>', methods=['PUT'])
@@ -189,6 +195,8 @@ def update_moneda(id):
         return jsonify({'mensaje': 'Solicitud Incorrecta'}), 400
 
     # TODO: en caso de una de las 2 entradas vacias dejarlo como estaba antes.
+
+    print(json)
 
     moneda.sigla = json["sigla"]
     moneda.nombre = json["nombre"]
@@ -348,9 +356,16 @@ def create_usuario_tiene_moneda():
 
 # READ
 @app.route('/api/usuario_tiene_moneda', methods=['GET'])
-def get_usuario_tiene_moneda():
+def get_usuario_tiene_monedas():
     usuario_tiene_monedas = [ usuario_tiene_moneda.json() for usuario_tiene_moneda in UsuarioTieneMoneda.query.all() ] 
     return jsonify({'usuario_tiene_monedas': usuario_tiene_monedas })
+
+@app.route('/api/usuario_tiene_moneda/<id>&<id2>', methods=['GET'])
+def get_usuario_tiene_moneda(id, id2):
+    utm = UsuarioTieneMoneda.query.filter_by(id_usuario=id,id_moneda=id2).first()
+    if utm is None:
+        return jsonify({'mensaje': 'El usuario no existe'}), 404
+    return utm.json()
 
 
 # UPDATE
