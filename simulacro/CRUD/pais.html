@@ -18,12 +18,13 @@ include '../functions/CRUD_management.php';
         <?php
         foreach ($response as &$valor)
         {
+
             
 
             if($valor['cod_pais'] != $to_edit)
             {
                 echo '<tr> ';
-                    echo '<th class="align-middle">'.$valor['cod_pais'].'</th>';
+                    echo '<th class="align-middle">'.$valor["cod_pais"].'</th>';
                     echo '<th class="align-middle">'.$valor['nombre'].'</th>';
                     echo '<th class="align-middle">
                             <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['cod_pais'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>

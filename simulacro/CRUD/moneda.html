@@ -17,8 +17,7 @@ include '../functions/CRUD_management.php';
     </thead>
     <tbody>
         <?php
-        $monedas = $response['monedas'];
-        foreach ($monedas as &$valor)
+        foreach ($response as &$valor)
         {
             
 
@@ -52,6 +51,7 @@ include '../functions/CRUD_management.php';
                             <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
                             <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
                             <a href="./moneda.html?id_to_delete='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                            <button onClick="redirect()" id="deselect"  type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </th>';
                     
                     echo '</tr>';

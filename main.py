@@ -103,13 +103,12 @@ def delete_user(id):
 def create_pais():
     json = request.get_json(force=True)
 
-    # TODO: No permitir que se asigne id_pais mediante API, erlo automaticamente
     # SOLO se puede crear si la id ya no está ocupada
-    if None in (json.get('cod_pais'), json.get('nombre')):
+    if '' == json.get('nombre'):
         return jsonify({'message': 'El formato está mal'}), 400
 
 
-    pais = Pais.create(json['cod_pais'], json['nombre'])
+    pais = Pais.create(json['nombre'])
     return jsonify({'pais': pais.json() })
 
 # READ
@@ -131,14 +130,14 @@ def get_pais(id):
     return pais.json()
 
 # UPDATE
-@app.route('/api/pais/<id>', methods=['PUT'])
-def uptade_pais(id):
-    pais = Pais.query.filter_by(id=id).first()
+@app.route('/api/pais/<cod_pais>', methods=['PUT'])
+def uptade_pais(cod_pais):
+    pais = Pais.query.filter_by(cod_pais=cod_pais).first()
     if pais is None:
         return jsonify({'mensaje': 'El pais no existe'}), 404
 
     json = request.get_json(force=True)
-    if None in (json.get('nombre')):
+    if '' == json.get('nombre'):
         return jsonify({'mensaje': 'Solicitud Incorrecta'}), 400
 
     pais.nombre = json["nombre"]
@@ -151,7 +150,7 @@ def uptade_pais(id):
 # TODO: ELIMINACION EN CASCADA
 
 # DELETE
-@app.route('/api/pais/<id>', methods=['DELETE'])
+@app.route('/api/pais/<cod_pais>', methods=['DELETE'])
 def delete_pais(cod_pais):
 	pais = Pais.query.filter_by(cod_pais=cod_pais).first()
 	if pais is None:
@@ -170,7 +169,6 @@ def delete_pais(cod_pais):
 def create_moneda():
     json = request.get_json(force=True)
 
-    # TODO: No permitir que se asigne id_moneda mediante API, si no hacerlo automaticamente
     if None in (json.get('sigla'), json.get('nombre')):
         return jsonify({'message': 'El formato está mal'}), 400
 
@@ -180,12 +178,15 @@ def create_moneda():
 
 
 
-
 # READ
 @app.route('/api/moneda', methods=['GET'])
 def get_monedas():
     monedas = [ moneda.json() for moneda in Moneda.query.all() ] 
-    return jsonify({'monedas': monedas })
+    monedas_return = dict()
+    for moneda in monedas:
+        monedas_return[moneda['id']] = moneda
+    return jsonify(monedas_return)
+
 
 # READ 1 MONEDA
 @app.route('/api/moneda/<id>', methods=['GET'])

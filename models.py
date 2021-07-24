@@ -83,8 +83,10 @@ class Pais(db.Model):
     nombre = db.Column(db.String(45), nullable=False)
 
     @classmethod
-    def create(cls, cod_pais, nombre):
-        pais = Pais(cod_pais=cod_pais, nombre=nombre)
+    def create(cls, nombre):
+        res = db.session.query(func.max(Pais.cod_pais).label('cod_pais')).one()
+        nid=res[0]+1
+        pais = Pais(cod_pais=nid, nombre=nombre)
         return pais.save()
 
     def save(self):
@@ -125,12 +127,11 @@ class Moneda(db.Model):
     usuario_monedas = db.relationship('UsuarioTieneMoneda', cascade="all,delete", lazy='dynamic')
 
     @classmethod
-    def create(cls, id, sigla, nombre):
+    def create(cls, sigla, nombre):
         res = db.session.query(func.max(Moneda.id).label('id')).one()
         nid=res[0]+1
         moneda = Moneda(id=nid, sigla=sigla, nombre=nombre)
-        temp = moneda.save()
-        print(temp)
+        moneda.save()
         return moneda
 
     def save(self):
