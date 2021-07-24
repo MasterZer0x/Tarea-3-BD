@@ -112,12 +112,14 @@ def create_pais():
     pais = Pais.create(json['cod_pais'], json['nombre'])
     return jsonify({'pais': pais.json() })
 
-
 # READ
 @app.route('/api/pais', methods=['GET'])
 def get_paises():
     paises = [ pais.json() for pais in Pais.query.all() ] 
-    return jsonify({'paises': paises })
+    paises_return = dict()
+    for pais in paises:
+        paises_return[pais['cod_pais']] = pais
+    return jsonify(paises_return)
 
     
 # READ 1 PAIS
