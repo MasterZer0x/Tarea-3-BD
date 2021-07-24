@@ -1,0 +1,92 @@
+<?php include $_SERVER['DOCUMENT_ROOT'].'/include/navbar.html'; 
+include '../functions/CRUD_management.php';
+?>
+
+<body>
+
+
+
+<table style="width:100%" class="table table-hover " >
+    <thead>
+        <tr style="color: rgb(0 121 185);">
+        <th>codigo pais</th>
+        <th>Nombre</th>
+        <th>CRUD</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($response as &$valor)
+        {
+            
+
+            if($valor['cod_pais'] != $to_edit)
+            {
+                echo '<tr> ';
+                    echo '<th class="align-middle">'.$valor['cod_pais'].'</th>';
+                    echo '<th class="align-middle">'.$valor['nombre'].'</th>';
+                    echo '<th class="align-middle">
+                            <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['cod_pais'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
+                            <a href="./pais.html?to_edit='.$valor['cod_pais'].'" class="btn btn-warning a_button_standar">Editar <i class="fas fa-edit"></i></a> 
+                            <a href="./pais.html?id_to_delete='.$valor['cod_pais'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                        </th>';
+                    echo '</tr>';
+            }
+            if($valor['cod_pais'] == $to_edit)
+            {
+                echo '<tr class="table-info "> ';
+                    echo '<th class="align-middle">'.$valor['cod_pais'].'</th>';
+                    echo '<form method="post" id="form_update">';
+                    echo '<th class="align-middle"><div class="form-group mb-0">
+                            <input name="nombre_upt" type="text" class="form-control" placeholder="Nombre" id="nombre_upt" value="'.$valor['nombre'].'" >
+                        </div></th>';
+                    echo '<th class="align-middle">
+                            <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['cod_pais'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
+                            <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
+                            <a href="./pais.html?id_to_delete='.$valor['cod_pais'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                            <button onClick="redirect()" id="deselect"  type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </th>';
+                    echo '</tr>';
+            }
+        }
+
+        ?>
+        <tbody>
+  </table>
+
+  
+
+  
+<!----  SECCION PARA CREATE---- -->
+
+<h1 style="text-align: center;margin-top: 5rem;margin-bottom: 2rem;"> Crear pais</h1>
+
+<table style="width:100%" class="table table-hover  " >
+    <thead>
+        <tr style="color: rgb(0 121 185);">
+        <th>Nombre</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <form method="post"  id="create-user-form">
+        <th>
+            <div class="form-group mb-0">
+                <input name="nombre_cre" type="text" class="form-control" placeholder="Nombre" id="nombre_cre" >
+            </div>
+        </th>
+        </form>
+        </tr>
+    </tbody>
+</table>
+
+<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-user-form" action="" class="btn btn-success">Crear pais <i class="fas fa-edit"></i></button>
+</div>
+
+
+
+
+
+    </body>
+    
+    </html>

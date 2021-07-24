@@ -1,5 +1,9 @@
-<?php include '../include/navbar.html'; 
-include 'helpers.php';
+<?php include $_SERVER['DOCUMENT_ROOT'].'/include/navbar.html'; 
+include '../functions/CRUD_management.php';
+
+$pais_response = callAPI('GET', 'http://127.0.0.1:4996/api/pais',  false);
+$pais_response_arr = json_decode($pais_response , true);
+
 ?>
 
 <body>
@@ -38,7 +42,7 @@ include 'helpers.php';
                 echo '<th class="align-middle"> 
                         <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a> 
                         <a href="./usuario.html?to_edit='.$valor['id'].'" class="btn btn-warning a_button_standar">Editar <i class="fas fa-edit"></i></a> 
-                        <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
+                        <a href="./usuario.html?id_to_delete='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
                     </th>';  
                 echo '</tr>';
             }
@@ -59,16 +63,24 @@ include 'helpers.php';
                 echo '<th class="align-middle"><div class="form-group mb-0">
                         <input name="contrasena" type="text" class="form-control" placeholder="Contraseña" id="contrasena" value="'.$valor['contrasena'].'" required>
                     </div></th>';
-                echo '<th class="align-middle"><div class="form-group mb-0">
-                        <input name="pais" type="text" class="form-control" placeholder="Pais" id="pais" value="'.$valor['pais'].'" required>
-                    </div></th>';
+                echo '<th class="align-middle"><div class="form-group mb-0"><select name="pais" class="form-control" id="country" selected=2 required>';
+                        
+                        foreach($pais_response_arr as &$pais)
+                        {
+                            if ($valor['pais'] != $pais['cod_pais']) echo '<option value="' . $pais["cod_pais"] .'">'.$pais["cod_pais"].': '. $pais["nombre"]. '</option>';
+                            else echo '<option selected="' . $pais["cod_pais"] .'" value="' . $pais["cod_pais"] .'">'.$pais["cod_pais"].': '. $pais["nombre"]. '</option>';
+                            
+                        }
+                        
+                echo '</select></div></th>';
                 echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
                 echo '</form>';
 
                 echo '<th class="align-middle">
                         <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
                         <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
-                        <a href="./usuario.html?delete_user='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                        <a href="./usuario.html?id_to_delete='.$valor['id'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                        <button onClick="redirect()" id="deselect"  type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </th>';
                 
                 echo '</tr>';
@@ -124,7 +136,14 @@ include 'helpers.php';
         </th>
         <th>
             <div class="form-group">
-                <input name="pais" type="text" class="form-control" placeholder="Pais" id="pais" required>
+                <select name="pais" class="form-control" id="country" selected=2 required>
+                    <?php
+                    foreach($pais_response_arr as &$pais)
+                    {
+                        echo '<option value="' . $pais["cod_pais"] .'">'.$pais["cod_pais"].': '. $pais["nombre"]. '</option>';
+                    }
+                    ?>
+                </select>
             </div>
         </th>
         </form>

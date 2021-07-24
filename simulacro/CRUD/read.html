@@ -1,5 +1,5 @@
-<?php include '../include/navbar.html'; 
-include 'APICaller.php';
+<?php include $_SERVER['DOCUMENT_ROOT'].'/include/navbar.html'; 
+include '../functions/CRUD_management.php';
 
 $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 $url_components = parse_url($actual_link);
@@ -37,7 +37,7 @@ if ( array_key_exists("query", $url_components))
             echo '<table>';
             foreach($keys as &$key)
             {
-                echo '<tr><th class="h5 font-weight-bold">'.$key.'</th>
+                echo '<tr><th class="h5 font-weight-bold">'.$key.':  </th>
                     <th class="h5">'.$call_json[$key].'</th></tr>';
             }
             echo '</table>';
