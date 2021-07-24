@@ -147,8 +147,6 @@ def uptade_pais(cod_pais):
 
 
 
-# TODO: ELIMINACION EN CASCADA
-
 # DELETE
 @app.route('/api/pais/<cod_pais>', methods=['DELETE'])
 def delete_pais(cod_pais):
@@ -208,8 +206,6 @@ def update_moneda(id):
     if None in (json.get('sigla'),json.get('nombre')):
         return jsonify({'mensaje': 'Solicitud Incorrecta'}), 400
 
-    # TODO: en caso de una de las 2 entradas vacias dejarlo como estaba antes.
-
     moneda.sigla = json["sigla"]
     moneda.nombre = json["nombre"]
     moneda.update()
@@ -218,8 +214,6 @@ def update_moneda(id):
 
 
 
-
-# TODO: ELIMINACION EN CASCADA
 
 # DELETE
 @app.route('/api/moneda/<id>', methods=['DELETE'])
@@ -241,12 +235,7 @@ def delete_moneda(id):
 def create_cuenta_bancaria():
     json = request.get_json(force=True)
 
-    # TODO: No permitir que se asigne id_moneda mediante API, si no hacerlo automaticamente
-    if None in (json.get('numero_cuenta'), json.get('id_usuario'), json.get('balance')):
-        return jsonify({'message': 'El formato está mal'}), 400
-
-
-    cuenta_bancaria = CuentaBancaria.create(json['numero_cuenta'], json['id_usuario'], json['balance'])
+    cuenta_bancaria = CuentaBancaria.create( json['id_usuario'], json['balance'])
     return jsonify({'cuenta_bancaria': cuenta_bancaria.json() })
 
 
@@ -256,7 +245,10 @@ def create_cuenta_bancaria():
 @app.route('/api/cuenta_bancaria', methods=['GET'])
 def get_cuenta_bancarias():
     cuentas_bancarias = [ cuenta_bancaria.json() for cuenta_bancaria in CuentaBancaria.query.all() ] 
-    return jsonify({'cuentas_bancarias': cuentas_bancarias })
+    cuentas_bancarias_return = dict()
+    for cuenta_bancaria in cuentas_bancarias:
+        cuentas_bancarias_return[cuenta_bancaria['numero_cuenta']] = cuenta_bancaria
+    return jsonify(cuentas_bancarias_return)
 
 
 # READ 1 Cuenta
@@ -269,17 +261,14 @@ def get_cuenta_bancaria(id):
 
 
 # UPDATE
-@app.route('/api/cuenta_bancaria/<id>', methods=['PUT'])
+@app.route('/api/cuenta_bancaria/<numero_cuenta>', methods=['PUT'])
 def update_cuenta(numero_cuenta):
     cuenta_bancaria = CuentaBancaria.query.filter_by(numero_cuenta=numero_cuenta).first()
     if cuenta_bancaria is None:
         return jsonify({'mensaje': 'La cuenta bancaria no existe'}), 404
 
     json = request.get_json(force=True)
-    # Se considera que lo unico cambiable en una cuenta es el balance.
-    if None in (json.get('balance')):
-        return jsonify({'mensaje': 'Solicitud Incorrecta'}), 400
-
+    cuenta_bancaria.id_usuario = json["id_usuario"]
     cuenta_bancaria.balance = json["balance"]
     cuenta_bancaria.update()
 
@@ -289,9 +278,9 @@ def update_cuenta(numero_cuenta):
 
 
 # DELETE
-@app.route('/api/cuenta_bancaria/<id>', methods=['DELETE'])
-def delete_cuenta_bancaria(id):
-	cuenta_bancaria = CuentaBancaria.query.filter_by(id=id).first()
+@app.route('/api/cuenta_bancaria/<numero_cuenta>', methods=['DELETE'])
+def delete_cuenta_bancaria(numero_cuenta):
+	cuenta_bancaria = CuentaBancaria.query.filter_by(numero_cuenta=numero_cuenta).first()
 	if cuenta_bancaria is None:
 		return jsonify({'mensaje': 'La cuenta bancaria no existe'}), 404
 

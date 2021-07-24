@@ -43,6 +43,17 @@ function pais_create_data()
     return $data;
 }
 
+
+function cuenta_bancaria_create_data()
+{
+    $data = array(  
+        'id_usuario' => $_POST['iduser2'], 
+        'balance' => $_POST['balance2']
+        );
+
+    return $data;
+}
+
 // -------------------------------------------------------------------------------
 // UPDATES
 
@@ -88,6 +99,15 @@ function pais_update_data()
 {
     $data = array(  
         'nombre' => $_POST['nombre_upt']
+        );
+
+    return $data;
+}
+function cuenta_bancaria_update_data()
+{
+    $data = array(  
+        'id_usuario' => $_POST['iduser'], 
+        'balance' => $_POST['balance']
         );
 
     return $data;

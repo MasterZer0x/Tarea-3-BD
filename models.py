@@ -177,8 +177,10 @@ class CuentaBancaria(db.Model):
 
 
     @classmethod
-    def create(cls, numero_cuenta, id_usuario, balance):
-        cuentabancaria = CuentaBancaria(numero_cuenta=numero_cuenta, id_usuario=id_usuario , balance=balance)
+    def create(cls, id_usuario, balance):
+        res = db.session.query(func.max(CuentaBancaria.numero_cuenta).label('numero_cuenta')).one()
+        nid=res[0]+1
+        cuentabancaria = CuentaBancaria(numero_cuenta=nid, id_usuario=id_usuario , balance=balance)
         return cuentabancaria.save()
 
     def save(self):

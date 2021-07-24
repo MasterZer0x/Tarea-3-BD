@@ -18,33 +18,40 @@ include '../functions/CRUD_management.php';
     </thead>
     <tbody>
         <?php
-        $cuentas = $response['cuentas_bancarias'];
-        foreach ($cuentas as &$valor)
+        foreach ($response as &$valor)
         {
-            
+            // Al ser n° cuenta pk, se tiene que no puede existir otra cuentea con esta llave
 
-            if($valor['id_usuario'] != $edit_usuario && $valor['numero_cuenta'] != $edit_cuenta)
+            if($valor['numero_cuenta'] != $to_edit)
             {
                 echo '<tr>';
-                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
                 echo '<th class="align-middle">'.$valor['numero_cuenta'].'</th>';   
+                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
                 echo '<th class="align-middle">'.$valor['balance'].'</th>';   
-                echo '<th class="align-middle"> <a href="./cuenta_bancaria.html?edit_usuario='.$valor['id_usuario'].'&edit_cuenta='.$valor['numero_cuenta'].'" class="btn btn-warning">Editar <i class="fas fa-edit"></i></a> 
-                        <a href="./cuenta_bancaria.html?delete_cuenta_bancaria='.$valor['id_usuario'].'&'.$valor['numero_cuenta'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
+                echo '<th class="align-middle"> 
+                    <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['numero_cuenta'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
+                        <a href="./cuenta_bancaria.html?to_edit='.$valor['numero_cuenta'].'" class="btn btn-warning">Editar <i class="fas fa-edit"></i></a> 
+                        <a href="./cuenta_bancaria.html?id_to_delete='.$valor['numero_cuenta'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
                     </th>';  
                 echo '</tr>';
             }
-            else if ($valor['id_usuario'] == $edit_usuario && $valor['numero_cuenta'] == $edit_cuenta)
+            else if ($valor['numero_cuenta'] == $to_edit)
             {
                 echo '<tr class="table-info "> ';
-                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
                 echo '<th class="align-middle">'.$valor['numero_cuenta'].'</th>';
-                echo '<form>';
-                echo '<th class="align-middle"><div class="form-group mb-0">
-                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['balance'].'" required>
+                echo '<form method="post" id="form_update">';
+                    echo '<th class="align-middle"><div class="form-group mb-0">
+                        <input name="iduser" type="text" class="form-control" placeholder="IDUsuario" id="iduser" value="'.$valor['id_usuario'].'" required>
                     </div></th>';
-                echo '<th class="align-middle"> <a href="./cuenta_bancaria.html?edit_usuario='.$valor['id_usuario'].'&edit_cuenta='.$valor['numero_cuenta'].'" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></a> 
-                    <a href="./cuenta_bancaria.html?delete_cuenta_bancaria='.$valor['id_usuario'].'&'.$valor['numero_cuenta'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>';
+               
+                echo '<th class="align-middle"><div class="form-group mb-0">
+                        <input name="balance" type="text" class="form-control" placeholder="Balance" id="balance" value="'.$valor['balance'].'" required>
+                    </div></th>';
+                echo '<th class="align-middle"> 
+                    <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['numero_cuenta'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
+                    <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
+                    <a href="./cuenta_bancaria.html?id_to_delete='.$valor['numero_cuenta'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                    <button onClick="redirect()" id="deselect"  type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button> </th>';
                 echo '</form>';
                 echo '</tr>';
             }
@@ -60,6 +67,40 @@ include '../functions/CRUD_management.php';
 
 
   
+<!----  SECCION PARA CREATE---- -->
+
+<h1 style="text-align: center;margin-top: 5rem;margin-bottom: 2rem;"> Crear usuario</h1>
+
+<table style="width:100%" class="table table-hover  " >
+    <thead>
+        <tr style="color: rgb(0 121 185);">
+        <th>ID Usuario</th>
+        <th>Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <form method="post"  id="create-user-form">
+        <th>
+            <div class="form-group mb-0">
+                <input name="iduser2" type="text" class="form-control" placeholder="IDUSUARIO" id="iduser2" required>
+            </div>
+        </th>
+        <th>
+            <div class="form-group mb-0">
+                <input name="balance2" type="text" class="form-control" placeholder="Balance" id="balance2" >
+            </div>
+        </th>
+        </form>
+        </tr>
+    </tbody>
+</table>
+
+<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-user-form" action="" class="btn btn-success">Crear usuario <i class="fas fa-edit"></i></button>
+</div>
+
+
+
 
 
     </body>

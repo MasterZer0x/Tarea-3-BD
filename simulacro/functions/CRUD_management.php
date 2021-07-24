@@ -71,12 +71,16 @@ if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
         case "pais":
             $data = pais_update_data();
             break;
+        case "cuenta_bancaria":
+            $data = cuenta_bancaria_update_data();
+            break;
         default :
             $data = array();
             break;
 
 
     }
+    echo "in";
     
     // Llamar a API con estructura dada (NO ES NECESARIO CAMBIAR ESTO)
     $put_response = callAPI('PUT', $URL_API.'/api/'.$tablename.'/'.$to_edit,  json_encode($data));
@@ -107,6 +111,10 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
         case "pais":
             $data = pais_create_data();
             $mensaje = "Ha habido un error al crear el pais".$to_edit;
+            break;
+        case "cuenta_bancaria":
+            $data = cuenta_bancaria_create_data();
+            $mensaje = "Ha habido un error al crear la cuenta bancaria id=".$to_edit;
             break;
         default :
             $data = array();
