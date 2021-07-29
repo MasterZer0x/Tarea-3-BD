@@ -166,7 +166,6 @@ def delete_pais(cod_pais):
 @app.route('/api/moneda', methods=['POST'])
 def create_moneda():
     json = request.get_json(force=True)
-    print(json)
     if None in (json.get('sigla'), json.get('nombre')):
         return jsonify({'message': 'El formato está mal'}), 400
 
@@ -237,9 +236,8 @@ def delete_moneda(id):
 @app.route('/api/cuenta_bancaria', methods=['POST'])
 def create_cuenta_bancaria():
     json = request.get_json(force=True)
-
     cuenta_bancaria = CuentaBancaria.create( json['id_usuario'], json['balance'])
-    return jsonify({'cuenta_bancaria': cuenta_bancaria.json() })
+    return jsonify({cuenta_bancaria.numero_cuenta: cuenta_bancaria.json() })
 
 
 
@@ -271,7 +269,6 @@ def update_cuenta(numero_cuenta):
         return jsonify({'mensaje': 'La cuenta bancaria no existe'}), 404
 
     json = request.get_json(force=True)
-    cuenta_bancaria.id_usuario = json["id_usuario"]
     cuenta_bancaria.balance = json["balance"]
     cuenta_bancaria.update()
 

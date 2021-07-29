@@ -39,10 +39,9 @@ include '../functions/CRUD_management.php';
             {
                 echo '<tr class="table-info "> ';
                 echo '<th class="align-middle">'.$valor['numero_cuenta'].'</th>';
+                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
                 echo '<form method="post" id="form_update">';
-                    echo '<th class="align-middle"><div class="form-group mb-0">
-                        <input name="iduser" type="text" class="form-control" placeholder="IDUsuario" id="iduser" value="'.$valor['id_usuario'].'" required>
-                    </div></th>';
+                    
                
                 echo '<th class="align-middle"><div class="form-group mb-0">
                         <input name="balance" type="text" class="form-control" placeholder="Balance" id="balance" value="'.$valor['balance'].'" required>
@@ -69,7 +68,7 @@ include '../functions/CRUD_management.php';
   
 <!----  SECCION PARA CREATE---- -->
 
-<h1 style="text-align: center;margin-top: 5rem;margin-bottom: 2rem;"> Crear usuario</h1>
+<h1 style="text-align: center;margin-top: 5rem;margin-bottom: 2rem;"> Crear cuenta de usuario</h1>
 
 <table style="width:100%" class="table table-hover  " >
     <thead>
@@ -80,7 +79,7 @@ include '../functions/CRUD_management.php';
     </thead>
     <tbody>
         <tr>
-        <form method="post"  id="create-user-form">
+        <form method="post"  id="create-cuenta-form">
         <th>
             <div class="form-group mb-0">
                 <input name="iduser2" type="text" class="form-control" placeholder="IDUSUARIO" id="iduser2" required>
@@ -96,7 +95,7 @@ include '../functions/CRUD_management.php';
     </tbody>
 </table>
 
-<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-user-form" action="" class="btn btn-success">Crear usuario <i class="fas fa-edit"></i></button>
+<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-cuenta-form" action="" class="btn btn-success">Crear cuenta <i class="fas fa-edit"></i></button>
 </div>
 
 

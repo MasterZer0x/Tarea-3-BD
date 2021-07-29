@@ -180,8 +180,10 @@ class CuentaBancaria(db.Model):
     def create(cls, id_usuario, balance):
         res = db.session.query(func.max(CuentaBancaria.numero_cuenta).label('numero_cuenta')).one()
         nid=res[0]+1
+        print(nid)
         cuentabancaria = CuentaBancaria(numero_cuenta=nid, id_usuario=id_usuario , balance=balance)
-        return cuentabancaria.save()
+        temp = cuentabancaria.save()
+        return cuentabancaria
 
     def save(self):
         try:

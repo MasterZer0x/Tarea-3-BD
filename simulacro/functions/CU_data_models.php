@@ -106,7 +106,6 @@ function pais_update_data()
 function cuenta_bancaria_update_data()
 {
     $data = array(  
-        'id_usuario' => $_POST['iduser'], 
         'balance' => $_POST['balance']
         );
 
