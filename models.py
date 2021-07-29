@@ -131,7 +131,7 @@ class Moneda(db.Model):
         res = db.session.query(func.max(Moneda.id).label('id')).one()
         nid=res[0]+1
         moneda = Moneda(id=nid, sigla=sigla, nombre=nombre)
-        moneda.save()
+        temp = moneda.save()
         return moneda
 
     def save(self):

@@ -40,7 +40,7 @@ include '../functions/CRUD_management.php';
                     echo '<th class="align-middle">'.$valor['id'].'</th>';
                     echo '<form method="post" id="form_update">';
                     echo '<th class="align-middle"><div class="form-group mb-0">
-                            <input name="nom" type="text" class="form-control" placeholder="Nombre" id="nomb" value="'.$valor['nombre'].'" required>
+                            <input name="nom" type="text" class="form-control" placeholder="Nombre" id="nom" value="'.$valor['nombre'].'" required>
                         </div></th>';
                     echo '<th class="align-middle"><div class="form-group mb-0">
                             <input name="sig" type="text" class="form-control" placeholder="Sigla" id="sig" value="'.$valor['sigla'].'" required>
@@ -81,7 +81,7 @@ include '../functions/CRUD_management.php';
     </thead>
     <tbody>
         <tr>
-        <form method="post"  id="create-user-form">
+        <form method="post"  id="create-moneda-form">
 
         <th>
             <div class="form-group mb-0">
@@ -98,7 +98,7 @@ include '../functions/CRUD_management.php';
     </tbody>
 </table>
 
-<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-user-form" action="" class="btn btn-success">Agregar moneda <i class="fas fa-edit"></i></button>
+<div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-moneda-form" action="" class="btn btn-success">Agregar moneda <i class="fas fa-edit"></i></button>
 </div>
 
 

@@ -166,13 +166,14 @@ def delete_pais(cod_pais):
 @app.route('/api/moneda', methods=['POST'])
 def create_moneda():
     json = request.get_json(force=True)
-
+    print(json)
     if None in (json.get('sigla'), json.get('nombre')):
         return jsonify({'message': 'El formato está mal'}), 400
 
 
     moneda = Moneda.create(json['sigla'], json['nombre'])
     return jsonify({moneda.id: moneda.json() })
+
 
 
 
@@ -193,6 +194,8 @@ def get_moneda(id):
     if moneda is None:
         return jsonify({'mensaje': 'La moneda no existe'}), 404
     return moneda.json()
+
+
 
 
 # UPDATE

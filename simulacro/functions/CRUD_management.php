@@ -59,14 +59,16 @@ if ( array_key_exists("query", $url_components))
 // Estructura para actualizar y crear filas en las tablas
 if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
     
-
+    $msj = '';
     switch($tablename)
     {
         case "usuario":
             $data = usuario_update_data($URL_API, $to_edit);
+            $msj = " al usuario ".$to_edit;
             break;
 	    case "moneda":
             $data = moneda_update_data();
+            $msj = " la moneda ".$to_edit;
             break;
         case "pais":
             $data = pais_update_data();
@@ -91,7 +93,7 @@ if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
     }
     else
     {
-        create_danger_windows("Ha habido un error al actualizar al usuario ".$to_edit);
+        create_danger_windows("Ha habido un error al actualizar".$msj);
     }
 
 }  
@@ -101,13 +103,13 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
     switch($tablename)
     {
         case "usuario":
-	    $mensaje = "Ha habido un error al crear al usuario".$to_edit;
+            $mensaje = "Ha habido un error al crear al usuario".$to_edit;
             $data = usuario_create_data();
             break;
 	    case "moneda":
-                $data = moneda_create_data($URL_API, $to_edit);
-                $mensaje = "Ha habido un error al crear la moneda".$to_edit;
-                break;
+            $data = moneda_create_data();
+            $mensaje = "Ha habido un error al crear la moneda".$to_edit;
+            break;
         case "pais":
             $data = pais_create_data();
             $mensaje = "Ha habido un error al crear el pais".$to_edit;
