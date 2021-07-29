@@ -33,6 +33,22 @@ function moneda_create_data()
     return $data;
 }
 
+function precio_moneda_create_data()
+{
+    $gmt_date = DateTime::createFromFormat(
+        'Y-m-d H:i:s',
+        date('Y-m-d H:i:s'),
+        new DateTimeZone('GMT')
+        );
+    $fecha = $gmt_date->format('Y-m-d H:i:s T');
+    $data = array(  
+        'id_moneda' => $_POST['idcoin'], 
+        'valor' => $_POST['bal'], 
+        'fecha' => $fecha,
+        );
+
+    return $data;
+}
 
 function usuario_tiene_moneda_create_data()
 {

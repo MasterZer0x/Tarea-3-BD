@@ -319,7 +319,7 @@ def get_precio_moneda(fecha,id):
     fecha_down = date_time_obj.strftime("%Y-%m-%d %H:%M:%S")
     fecha_up = date_time_obj + timedelta(0,1)
     fecha_up = fecha_up.strftime("%Y-%m-%d %H:%M:%S")
-    precio_moneda = PrecioMoneda.query.filter(PrecioMoneda.id_moneda ==id, PrecioMoneda.fecha >= fecha_down, PrecioMoneda.fecha < fecha_up ).first()
+    precio_moneda = PrecioMoneda.query.filter(PrecioMoneda.id_moneda == id, PrecioMoneda.fecha >= fecha_down, PrecioMoneda.fecha < fecha_up ).first()
     if precio_moneda is None:
         return jsonify({'mensaje': 'La fecha de moneda no existe'}), 404
     return precio_moneda.json()
@@ -344,15 +344,19 @@ def update_precio_moneda(id_moneda):
 
 
 # DELETE
-@app.route('/api/precio_moneda/<id>', methods=['DELETE'])
-def delete_precio_moneda(id):
-	precio_moneda = PrecioMoneda.query.filter_by(id=id).first()
-	if precio_moneda is None:
-		return jsonify({'mensaje': 'El precio de la moneda no existe'}), 404
-
-	precio_moneda.delete()
-
-	return jsonify({'precio_moneda': precio_moneda.json() })
+@app.route('/api/precio_moneda/<fecha>/<id>', methods=['DELETE'])
+def delete_precio_moneda(fecha,id):
+    # fecha_raw en formato "%a, %d %b %Y %H:%M:%S GMT"
+    date_time_obj = datetime.strptime(fecha, '%a, %d %b %Y %H:%M:%S %Z')
+    fecha_down = date_time_obj.strftime("%Y-%m-%d %H:%M:%S")
+    fecha_up = date_time_obj + timedelta(0,1)
+    fecha_up = fecha_up.strftime("%Y-%m-%d %H:%M:%S")
+    precio_moneda = PrecioMoneda.query.filter(PrecioMoneda.id_moneda == id, PrecioMoneda.fecha >= fecha_down, PrecioMoneda.fecha < fecha_up ).first()
+    if precio_moneda is None:
+        return jsonify({'mensaje': 'El precio de la moneda no existe'}), 404
+    
+    precio_moneda.delete()
+    return jsonify({'precio_moneda': precio_moneda.json() })
 
 
 # ------------------------------- USUARIO TIENE MONEDA ---------------------------------------

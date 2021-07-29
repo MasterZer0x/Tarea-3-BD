@@ -52,7 +52,11 @@ if ( array_key_exists("query", $url_components))
         }
     }
     if ( array_key_exists("id_to_delete", $params) && array_key_exists("id2delete", $params)){ // Si se ha solicitado la eliminacion de una fila
-        $call = callAPI('DELETE', $URL_API.'/api/'.$tablename.'/'.$params['id_to_delete'].'/'.$params['id2delete'], false);
+        
+        $paramms = $params['id_to_delete'].'/'.$params['id2delete'];
+        $correct_time = str_replace(' ', '%20', $params['id_to_delete']);
+        $paramms =  $correct_time . '/' .$params['id2delete'];
+        $call = callAPI('DELETE', $URL_API.'/api/'.$tablename.'/'.$paramms, false);
         if(is_array(json_decode($call, true)))
         {
             create_success_windows("Se ha eliminado la fila con la id=".$params['id_to_delete']." asociada"); // Se ha borrado una fila
@@ -147,6 +151,10 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
             $mensaje = "Ha habido un error al agregar la moneda al usuario id=".$to_edit;
             $mensaje2 = "El usuario ya tiene la moneda";
             break;
+        case "precio_moneda":
+                $data = precio_moneda_create_data();
+                $mensaje = "Ha habido un error al agregar el nuevo valor a la moneda id=".$to_edit;
+                break;
         default :
             $data = array();
             break;
