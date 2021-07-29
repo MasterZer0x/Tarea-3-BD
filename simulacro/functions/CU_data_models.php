@@ -34,6 +34,19 @@ function moneda_create_data()
 }
 
 
+function usuario_tiene_moneda_create_data()
+{
+    $data = array(  
+        'id_usuario' => $_POST['iduser'],
+        'id_moneda' => $_POST['idcoin'],
+        'balance' => $_POST['bal'],
+        );
+
+    return $data;
+}
+
+
+
 function pais_create_data()
 {
     $data = array(  
@@ -111,5 +124,15 @@ function cuenta_bancaria_update_data()
 
     return $data;
 }
+
+function usuario_tiene_moneda_update_data()
+{
+    $data = array(  
+        'balance' => $_POST['bal']
+        );
+
+    return $data;
+}
+
 
 ?>

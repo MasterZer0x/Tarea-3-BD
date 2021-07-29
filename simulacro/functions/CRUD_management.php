@@ -12,6 +12,7 @@ $tablename = $temp[1];
 
 // Inicializacion identificadores de accion
 $to_edit = 0; // No hay id a modificar
+$second_edit = 0; // Segundo id primario
 $update_id = 0;
 $borrado = 0; // No se ha eliminado a usuarios
 
@@ -39,8 +40,19 @@ if ( array_key_exists("query", $url_components))
 
     }
 
-    if ( array_key_exists("id_to_delete", $params)){ // Si se ha solicitado la eliminacion de una fila
+    if ( array_key_exists("id_to_delete", $params) && !array_key_exists("id2delete", $params)){ // Si se ha solicitado la eliminacion de una fila
         $call = callAPI('DELETE', $URL_API.'/api/'.$tablename.'/'.$params['id_to_delete'], false);
+        if(is_array(json_decode($call, true)))
+        {
+            create_success_windows("Se ha eliminado la fila con la id=".$params['id_to_delete']." asociada"); // Se ha borrado una fila
+        }
+        else
+        {
+            create_danger_windows("No se ha podido eliminar al usuario con id=".$params['id_to_delete']); // Ha ocurrido un error
+        }
+    }
+    if ( array_key_exists("id_to_delete", $params) && array_key_exists("id2delete", $params)){ // Si se ha solicitado la eliminacion de una fila
+        $call = callAPI('DELETE', $URL_API.'/api/'.$tablename.'/'.$params['id_to_delete'].'/'.$params['id2delete'], false);
         if(is_array(json_decode($call, true)))
         {
             create_success_windows("Se ha eliminado la fila con la id=".$params['id_to_delete']." asociada"); // Se ha borrado una fila
@@ -60,21 +72,33 @@ if ( array_key_exists("query", $url_components))
 if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
     
     $msj = '';
+    $urlp = '';
     switch($tablename)
     {
         case "usuario":
             $data = usuario_update_data($URL_API, $to_edit);
             $msj = " al usuario ".$to_edit;
+            $urlp = $to_edit;
             break;
 	    case "moneda":
             $data = moneda_update_data();
             $msj = " la moneda ".$to_edit;
+            $urlp = $to_edit;
             break;
         case "pais":
             $data = pais_update_data();
+            $msj = " el pais".$to_edit;
+            $urlp = $to_edit;
             break;
         case "cuenta_bancaria":
+            $urlp = $to_edit;
+            $msj = " la cuenta bancaria".$to_edit;
             $data = cuenta_bancaria_update_data();
+            break;
+        case "usuario_tiene_moneda":
+            $urlp = $to_edit.'/'.$second_edit;
+            $msj = " el balance del usuario".$to_edit;
+            $data = usuario_tiene_moneda_update_data();
             break;
         default :
             $data = array();
@@ -85,7 +109,7 @@ if(isset($_POST['update_button'])){ // Si se presiono el boton "Actualizar"
     echo "in";
     
     // Llamar a API con estructura dada (NO ES NECESARIO CAMBIAR ESTO)
-    $put_response = callAPI('PUT', $URL_API.'/api/'.$tablename.'/'.$to_edit,  json_encode($data));
+    $put_response = callAPI('PUT', $URL_API.'/api/'.$tablename.'/'.$urlp,  json_encode($data));
     $put_response_array = json_decode($put_response , true);
     if(is_array($put_response_array)) // si hay respuesta
     {
@@ -118,6 +142,11 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
             $data = cuenta_bancaria_create_data();
             $mensaje = "Ha habido un error al crear la cuenta bancaria id=".$to_edit;
             break;
+        case "usuario_tiene_moneda":
+            $data = usuario_tiene_moneda_create_data();
+            $mensaje = "Ha habido un error al agregar la moneda al usuario id=".$to_edit;
+            $mensaje2 = "El usuario ya tiene la moneda";
+            break;
         default :
             $data = array();
             break;
@@ -130,10 +159,15 @@ if(isset($_POST['create_button'])){ // Si se presiono el boton "Crear"
     // Llamar a API con estructura dada (NO ES NECESARIO CAMBIAR ESTO)
     $call_post = callAPI('POST', 'http://127.0.0.1:4996/api/'.$tablename,  json_encode($data));
     $response_post = json_decode($call_post , true);
-    if(is_array($response_post)) // si hay respuesta
+    if(is_array($response_post) && !(array_key_first($response_post) == 'message')) // si hay respuesta
     {
+
         header("Location: http://localhost/simulacro/CRUD/".$tablename.".html?success=".array_key_first($response_post));
     }
+    elseif ($response_post['message'] == "Esta creado")
+    {
+        create_warning_windows($mensaje2);
+    }     
     else
     {
         create_danger_windows($mensaje);

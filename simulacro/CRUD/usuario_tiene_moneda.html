@@ -22,30 +22,36 @@ include '../functions/CRUD_management.php';
         {
             
 
-            if($valor['id_usuario'] != $edit_usuario && $valor['id_moneda'] != $edit_moneda)
+            if($valor['id_usuario'] != $to_edit && $valor['id_moneda'] != $second_edit)
             {
                 echo '<tr>';
                 echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
                 echo '<th class="align-middle">'.$valor['id_moneda'].'</th>';   
                 echo '<th class="align-middle">'.$valor['balance'].'</th>';   
-                echo '<th class="align-middle"> <a href="./usuario_tiene_moneda.html?edit_usuario='.$valor['id_usuario'].'&edit_moneda='.$valor['id_moneda'].'" class="btn btn-warning">Editar <i class="fas fa-edit"></i></a> 
-                        <a href="./usuario_tiene_moneda.html?delete_usuario_tiene_moneda='.$valor['id_usuario'].'&'.$valor['id_moneda'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
+                echo '<th class="align-middle">
+                    <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id_usuario'].'&moneda='.$valor['id_moneda'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a> 
+                    <a href="./usuario_tiene_moneda.html?to_edit='.$valor['id_usuario'].'&second_edit='.$valor['id_moneda'].'" class="btn btn-warning">Editar <i class="fas fa-edit"></i></a> 
+                    <a href="./usuario_tiene_moneda.html?id_to_delete='.$valor['id_usuario'].'&id2delete='.$valor['id_moneda'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a> 
                     </th>';  
                 echo '</tr>';
             }
-            else if ($valor['id_usuario'] == $edit_usuario && $valor['id_moneda'] == $edit_moneda)
+            else if ($valor['id_usuario'] == $to_edit && $valor['id_moneda'] == $second_edit)
             {
-                echo '<tr class="table-info "> ';
-                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
-                echo '<th class="align-middle">'.$valor['id_moneda'].'</th>';
-                echo '<form>';
-                echo '<th class="align-middle"><div class="form-group mb-0">
-                        <input name="nombre" type="text" class="form-control" placeholder="Nombre" id="name" value="'.$valor['balance'].'" required>
-                    </div></th>';
-                echo '<th class="align-middle"> <a href="./usuario_tiene_moneda.html?edit_usuario='.$valor['id_usuario'].'&edit_moneda='.$valor['id_moneda'].'" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></a> 
-                    <a href="./usuario_tiene_moneda.html?delete_usuario_tiene_moneda='.$valor['id_usuario'].'&'.$valor['id_moneda'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>';
-                echo '</form>';
-                echo '</tr>';
+                    echo '<tr class="table-info "> ';
+                    echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
+                    echo '<th class="align-middle">'.$valor['id_moneda'].'</th>';
+                    echo '<form method="post" id="form_update">';
+                        echo '<th class="align-middle"><div class="form-group mb-0">
+                                <input name="bal" type="text" class="form-control" placeholder="Balance" id="bal" value="'.$valor['balance'].'" required>
+                            </div></th>';
+                        echo '</form>';
+    
+                    echo '<th class="align-middle">
+                        <a href="./read.html?parent_table='.$tablename.'&read_id='.$valor['id_usuario'].'&moneda='.$valor['id_moneda'].'" class="btn btn-primary a_button_standar">Ver <i class="fas fa-search"></i></a>
+                        <button name="update_button" type="submit" id="update_button" form="form_update" action="" class="btn btn-warning">Actualizar <i class="fas fa-edit"></i></button> 
+                        <a href="./usuario_tiene_moneda.html?id_to_delete='.$valor['id_usuario'].'&id2delete='.$valor['id_moneda'].'" class="btn btn-danger">Borrar <i class="fas fa-trash-alt"></i></a>
+                    </th>';
+                    echo '</tr>';
             }
 
             
@@ -58,9 +64,48 @@ include '../functions/CRUD_management.php';
   </table>
 
 
+  <!----  SECCION PARA CREATE---- -->
+
+  <h1 style="text-align: center;margin-top: 5rem;margin-bottom: 2rem;"> Agregar moneda a usuario</h1>
+
+  <table style="width:100%" class="table table-hover  " >
+      <thead>
+          <tr style="color: rgb(0 121 185);">
+              <th>Id Usuario</th>
+              <th>Id Moneda</th>
+              <th>Balance</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+          <form method="post"  id="create-user-coin-form">
   
-
-
-    </body>
+          <th>
+              <div class="form-group mb-0">
+                  <input name="iduser" type="text" class="form-control" placeholder="Id Usuario" id="iduser" >
+              </div>
+          </th>
+          <th>
+              <div class="form-group mb-0">
+                  <input name="idcoin" type="text" class="form-control" placeholder="Id Moneda" id="idcoin" required>
+              </div>
+          </th>
+          <th>
+              <div class="form-group mb-0">
+                  <input name="bal" type="text" class="form-control" placeholder="Balance" id="bal" required>
+              </div>
+          </th>
+          </form>
+          </tr>
+      </tbody>
+  </table>
+  
+  <div class="text-center custom-margin" ><button name="create_button" type="submit" id="create_button" form="create-user-coin-form" action="" class="btn btn-success">Agregar<i class="fas fa-edit"></i></button>
+  </div>
     
-    </html>
+  
+  
+  
+      </body>
+      
+      </html>

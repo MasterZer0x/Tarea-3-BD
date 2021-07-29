@@ -371,6 +371,9 @@ def create_usuario_tiene_moneda():
         return jsonify({'message': 'El formato está mal'}), 400
 
     usuario_tiene_moneda = UsuarioTieneMoneda.create(json['id_usuario'], json['id_moneda'], json['balance'])
+    if not usuario_tiene_moneda:
+        return jsonify({'message': 'Esta creado'}), 400
+    
     return jsonify({'usuario_tiene_moneda': usuario_tiene_moneda.json() })
 
 
@@ -392,28 +395,43 @@ def get_usuario_tiene_moneda(id_user,id_moneda):
     return usuario_tiene_moneda.json()
 
 
+"""@app.route('/api/moneda/<id>', methods=['PUT'])
+def update_moneda(id):
+    moneda = Moneda.query.filter_by(id=id).first()
+    if moneda is None:
+        return jsonify({'mensaje': 'La moneda no existe'}), 404
+
+    json = request.get_json(force=True)
+    if None in (json.get('sigla'),json.get('nombre')):
+        return jsonify({'mensaje': 'Solicitud Incorrecta'}), 400
+
+    moneda.sigla = json["sigla"]
+    moneda.nombre = json["nombre"]
+    moneda.update()
+
+    return jsonify({'moneda': moneda.json() })"""
+
 # UPDATE
-@app.route('/api/usuario_tiene_moneda/<id>', methods=['PUT'])
-def update_usuario_tiene_moneda(id_usuario):
-    usuario_tiene_moneda = UsuarioTieneMoneda.query.filter_by(id_usuario=id_usuario).first()
+@app.route('/api/usuario_tiene_moneda/<id_user>/<id_moneda>', methods=['PUT'])
+def update_usuario_tiene_moneda(id_user,id_moneda):
+    
+    usuario_tiene_moneda = UsuarioTieneMoneda.query.filter_by(id_usuario=id_user, id_moneda=id_moneda).first()
     if usuario_tiene_moneda is None:
         return jsonify({'mensaje': 'El historial del precio de la moneda no existe'}), 404
 
     json = request.get_json(force=True)
-    if None in (json.get('id_usuario'),json.get('id_moneda'),json.get('balance')):
-        return jsonify({'mensaje': 'Solicitud Incorrecta'}), 400
-
+    
     # Se considera el par id_usuario-id_moneda como el identificador efectivo de un registro, por lo que solo tiene sentido actualizar el balance de este.
     usuario_tiene_moneda.balance = json["balance"]
     usuario_tiene_moneda.update()
 
-    return jsonify({'usuario_tiene_moneda': usuario_tiene_moneda.json() })
+    return jsonify({usuario_tiene_moneda.id_usuario: usuario_tiene_moneda.json() })
 
 
 # DELETE
-@app.route('/api/usuario_tiene_moneda/<id>', methods=['DELETE'])
-def delete_usuario_tiene_moneda(id):
-	usuario_tiene_moneda = UsuarioTieneMoneda.query.filter_by(id=id).first()
+@app.route('/api/usuario_tiene_moneda/<id_user>/<id_moneda>', methods=['DELETE'])
+def delete_usuario_tiene_moneda(id_user,id_moneda):
+	usuario_tiene_moneda = UsuarioTieneMoneda.query.filter_by(id_usuario=id_user,id_moneda=id_moneda).first()
 	if usuario_tiene_moneda is None:
 		return jsonify({'mensaje': 'El usuario no existe'}), 404
 

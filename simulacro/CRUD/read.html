@@ -29,6 +29,11 @@ if ( array_key_exists("query", $url_components))
                 $correct_time = str_replace(' ', '%20', $params['time']);
                 $api_params =  $correct_time . '/' .$params['read_id'];
         }
+        if ( array_key_exists("moneda", $params)) // Si se requieren parametros adicionales (aparte de parent_table y read_id)
+            {
+                $correct_time = str_replace(' ', '%20', $params['moneda']);
+                $api_params =   $params['read_id'] . '/' .$correct_time;
+        }
         $call = callAPI('GET', $URL_API.'/api/'.$params['parent_table'].'/'.$api_params, false);
         $call_json = json_decode($call, true);
         if(is_array($call_json))
