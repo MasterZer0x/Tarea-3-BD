@@ -442,6 +442,7 @@ def delete_usuario_tiene_moneda(id_user,id_moneda):
 	usuario_tiene_moneda.delete()
 
 	return jsonify({'usuario_tiene_moneda': usuario_tiene_moneda.json() })
+
 # --------------------------------------------------------------------------------------------
 
 #                                IMPLEMENTACION CONSULTAS SOLICITADAS
@@ -453,7 +454,7 @@ base_cons_dir = '/api/consultas/'
 @app.route(base_cons_dir+'1/<year>', methods=['GET'])
 def get_user_by_year(year):
     # Año en formato %Y (4 digitos)
-    date_time_obj = datetime.strptime(year, '%Y') # String to datetime object
+    date_time_obj = datetime.strptime(year.zfill(4), '%Y') # String to datetime object
     base_year_string = date_time_obj.strftime("%Y-%m-%d %H:%M:%S") # Formatear como año-00-00 00:00:00
     next_year_obj = date_time_obj + timedelta(365) # Sumar 1 año al año dado
     next_year_string = next_year_obj.strftime("%Y-%m-%d %H:%M:%S") # Formatear como año+1-00-00 00:00:00
