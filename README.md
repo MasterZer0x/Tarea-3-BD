@@ -1,4 +1,5 @@
 # Tarea-3-BD
+# Grupo 16
 
 ## Consideraciones:
 
@@ -10,4 +11,4 @@
 ## Supuestos:
 
 - Se considera que al ser solo consultas de la informacion contenida en los datos es de unico interes leer estas y no modificarlas.
-- 
+- Se realizan las consultas en main.py para asi hacer las consultas a la api a nivel de python, evitando usar SQL con python
