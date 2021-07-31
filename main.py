@@ -3,7 +3,7 @@ from flask import Flask
 from flask import jsonify
 from sqlalchemy.orm import session
 from sqlalchemy import func
-from sqlalchemy import desc
+from sqlalchemy import extract
 from config import config
 from models import CuentaBancaria, PrecioMoneda, UsuarioTieneMoneda, db
 from models import Pais
@@ -12,6 +12,13 @@ from models import Moneda
 from flask import request
 from datetime import datetime
 from datetime import timedelta
+import re
+
+# -------------------------------------- UTILES --------------------------------------------
+
+pat = re.compile(r'\w{3}, \d{2} (\w{3}) \d{4} \d{2}:\d{2}:\d{2} GMT', re.MULTILINE)
+
+# -------------------------------------- APP --------------------------------------------
 
 app = Flask(__name__)
 enviroment = config['development']
@@ -504,16 +511,26 @@ def get_monedas_top():
     monedas = [moneda.json() for moneda in Moneda.query.all()]
     contados = []
     for m in monedas:
-        contados.append((UsuarioTieneMoneda.query.filter(UsuarioTieneMoneda.id_moneda == m["id"]).count(),m["nombre"],m["sigla"]))
+        contados.append((UsuarioTieneMoneda.query.filter(UsuarioTieneMoneda.id_moneda == m["id"]).count(),m["nombre"],m["sigla"],m["id"]))
     contados.sort(reverse=True)
 
-     if len(contados) == 0:
+    if len(contados) == 0:
         return jsonify({'message': 'No se han encontrado monedas a ingresar.'}), 400
 
     return jsonify(contados[:3]), 200
     
 
-
+@app.route(base_cons_dir+'7/<mes>', methods=['GET'])
+def get_monedas_change_top(mes):
+    monedas = [moneda.json() for moneda in Moneda.query.all()]
+    contados = []
+    for m in monedas:
+        cambios = PrecioMoneda.query.filter(PrecioMoneda.id_moneda == m["id"], extract('month', PrecioMoneda.fecha) == datetime(year=1999,month=int(mes), day=12).month).count()
+        contados.append((cambios,m["id"],m["nombre"],m["sigla"]))
+    if len(contados) == 0:
+        return jsonify({'message': 'No se han encontrado monedas a ingresar.'}), 400
+    contados.sort(reverse=True)
+    return jsonify(contados[0]), 200
 
 
 @app.route(base_cons_dir+'8/<user_id>', methods=['GET'])
@@ -527,6 +544,17 @@ def get_max_money_by_user(user_id):
         return jsonify({'message': 'No se han encontrado monedas par el usuario dado.'}), 400
 
     return jsonify(valores), 200
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
