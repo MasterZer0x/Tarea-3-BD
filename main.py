@@ -477,6 +477,11 @@ def get_user_by_country(country):
     pais = Pais.query.filter(Pais.cod_pais == int(country)).first()
 
     respuesta = {"usuarios":[ usuario.json() for usuario in users_filtered ], "pais":pais.nombre}
+    if len(respuesta["usuarios"]) == 0:
+        return jsonify({'message': 'No se han encontrado usuarios para el año ingresado.'}), 400
+    if len(respuesta["pais"]) == 0:
+        return jsonify({'message': 'No se ha encontrado el nombre del pais solicitado.'}), 400
+
     return jsonify(respuesta)
 
 
@@ -501,6 +506,10 @@ def get_monedas_top():
     for m in monedas:
         contados.append((UsuarioTieneMoneda.query.filter(UsuarioTieneMoneda.id_moneda == m["id"]).count(),m["nombre"],m["sigla"]))
     contados.sort(reverse=True)
+
+     if len(contados) == 0:
+        return jsonify({'message': 'No se han encontrado monedas a ingresar.'}), 400
+
     return jsonify(contados[:3]), 200
     
 
