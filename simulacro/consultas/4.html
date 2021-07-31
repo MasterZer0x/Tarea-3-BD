@@ -1,0 +1,67 @@
+<?php include $_SERVER['DOCUMENT_ROOT'].'/include/navbar.html'; 
+include '../functions/APICaller.php';
+?>
+
+
+<body>
+    <div class="form-group mb-3 mt-3 w-50" style="text-align: center !important; margin-left: auto !important;margin-right: auto !important;">
+        <h4 class="mb-3">Maximo valor historico de id_moneda</h4>
+        <form method="post" id="consulta" >
+            <input name="id_moneda" type="number" class="form-control w-25" style="display: inline-block !important;" placeholder="ID Moneda" id="id_moneda">
+            <?php if (isset($_POST['id_moneda'])) $id_moneda = $_POST['id_moneda'];
+                  else $id_moneda = 0;?>
+            <button form="consulta" name="consulta_button" type="submit" id="consulta_button"  class="btn btn-success">Consultar <i class="fas fa-search"></i>
+        </form>
+    </div>
+
+    <?php 
+    
+        if (isset($_POST['id_moneda']))
+        {
+                echo '<h4 class="mb-3">Resultados para la id '.$id_moneda.': </h4>';
+
+                $call = callAPI('GET', $URL_API.'/api/consultas/4/'.$_POST['id_moneda'], false);
+                $response = json_decode($call, true);
+
+                echo '<table  style="width:100%" class="table table-hover"><thead>
+                    <tr style="color: rgb(0 121 185);">
+                    <th>ID Moneda</th>
+                    <th>Fecha</th>
+                    <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                if(is_array($response) && !(array_key_first($response) == 'message')) // si hay respuesta
+                {
+                    
+                        foreach ($response as &$valor)
+                        {
+                            echo '<tr>';
+                                echo '<th class="align-middle">'.$valor['id_moneda'].'</th>';
+                                echo '<th class="align-middle">'.$valor['fecha'].'</th>';   
+                                echo '<th class="align-middle">'.$valor['valor'].'</th>';   
+                                echo '</tr>';
+                        }
+                }
+                elseif (array_key_first($response) == 'message')
+                {
+                    echo '<tr><td colspan=7 class="text-center"><h4>'.$response['message'] .'</h4></td></tr>';
+                }     
+                else
+                {
+                    echo '<h4>Ha ocurrido un error inesperado.  </h4>';
+                }
+
+                echo '</tbody></table>';
+            
+
+
+        }    
+    
+    ?>
+
+
+
+</body>
+    
+</html>

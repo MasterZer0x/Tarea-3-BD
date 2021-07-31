@@ -1,7 +1,14 @@
 # Tarea-3-BD
+# Grupo 16
 
-Francisco Pizarro (201930019-9):
+## Consideraciones:
 
-Hola, desconozco si en estas iteraciones se descontará puntaje por atraso, de todas formas, lamento la hora a la que se envió el documento con la informacion del git, este retraso principalmente se debe no se habia hecho el CRUD solicitado, en un principio crei que mis compañeros lo harían, dado que por mi parte ya habia dejado listo el git, arreglado e incoporado la interfaz necesaria para las consultas y tablas de la bd, pero, como se puede intuir por este escrito, no lo realizaron (uno de ellos lo intento y no puedo, mientras que el otro no hizo presencia), razon por la cual me veo forzado a realizar esta iteracion por mi cuenta luego de entregado un lab de 140 y un certamen de OSI, intenté avanzar lo mas posible dentro del tiempo que tuve disponible (a partir de las 11:50 PM app. ademas, considerando que perdi un tiempo considerable con problemas con flask: los puertos que se habian abierto no se cerraban, haciendo que siempre se mostrará en pantalla la sesion de la primera ejecucion) pero aun asi quedaron cosas que se podrian incoporar y mejorar en el CRUD dado, pero debido al frio, la falta de sueño y el cansancio mental me encuentro incapacitado en terminar estas, notar que dejé varias comentadas en los TODO. Agradeceria, en caso de que se descuente puntaje por atraso la comprension y consideracion de la situacion recien mencionada.
+- Para el correcto funcionamiento de los codigos entregados se debe realizar la configuracion de la direccion de la API dentro del archivo /simulacro/functions/APICaller.php, ingresando la direccion de la API propia, junto con el puerto respectivo.
+- Se deja el codigo de las consultas personalizadas solicitadas en el archivo main.py, se encuentras las consultas al fondo de este mismo.
+- Todo lo relacionado con esta entrega esta dentro de la carpeta base y dentro de la carpeta simulacro.
+- Se encuentra dividida la carpeta simulacro en 3 partes principales, 2 para el CRUD y las consultas respectivas, mientras que la carpeta functions hace de un contenedor para todas las funciones que se creyeron esenciales para el desarrollo de la entrega.
 
-Queda como evidencia de lo anteriormente dicho el historial de las commits en el git.
+## Supuestos:
+
+- Se considera que al ser solo consultas de la informacion contenida en los datos es de unico interes leer estas y no modificarlas.
+- Se realizan las consultas en main.py para asi hacer las consultas a la api a nivel de python, evitando usar SQL con python
