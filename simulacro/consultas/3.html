@@ -1,29 +1,51 @@
 <?php include $_SERVER['DOCUMENT_ROOT'].'/include/navbar.html'; 
 include '../functions/APICaller.php';
+
+$pais_response = callAPI('GET', 'http://127.0.0.1:4996/api/pais',  false);
+$pais_response_arr = json_decode($pais_response , true);
 ?>
 
 
 <body>
     <div class="form-group mb-3 mt-3 w-50" style="text-align: center !important; margin-left: auto !important;margin-right: auto !important;">
-        <h4 class="mb-3">Usuarios por Año</h4>
+        <h4 class="mb-3">Usuarios por Pais</h4>
         <form method="post" id="consulta" >
-            <input name="anno" type="number" class="form-control w-25" style="display: inline-block !important;" placeholder="Año" id="anno">
-            <?php if (isset($_POST['anno'])) $anno = $_POST['anno'];
-                  else $anno = 0;?>
+            <select name="country" class="form-control" id="country" selected=2 required>
+            <?php
+                if (isset($_POST['country'])){
+                    $country = $_POST['country'];
+                    }
+                else {
+                    $country = '-1';
+                    
+                        }
+    
+                foreach($pais_response_arr as &$pais)
+                {
+                    if ($country != $pais['cod_pais']) echo '<option value="' . $pais["cod_pais"] .'">'.$pais["cod_pais"].': '. $pais["nombre"]. '</option>';
+                    else echo '<option selected="' . $pais["cod_pais"] .'" value="'.$pais["cod_pais"].': '. $pais["nombre"]. '">'.$pais["cod_pais"].': '. $pais["nombre"]. '</option>';
+                    
+                } ?>
+                
+         </select>
             <button form="consulta" name="consulta_button" type="submit" id="consulta_button"  class="btn btn-success">Consultar <i class="fas fa-search"></i>
         </form>
     </div>
 
     <?php 
     
-        if (isset($_POST['anno']))
+        if (isset($_POST['country']))
         {
-            if ($_POST['anno'] >= 0 && $_POST['anno'] <= 9999)
-            {
-                echo '<h4 class="mb-3">Resultados año '.$anno.': </h4>';
+           
+                
+                
 
-                $call = callAPI('GET', $URL_API.'/api/consultas/1/'.$_POST['anno'], false);
+                $call = callAPI('GET', $URL_API.'/api/consultas/3/'.$_POST['country'], false);
                 $response = json_decode($call, true);
+
+                $pais = $response['pais'];
+                $response = $response['usuarios'];
+                echo '<h4 class="mb-3">Resultados de pais '.$pais.': </h4>';
 
                 echo '<table  style="width:100%" class="table table-hover"><thead>
                     <tr style="color: rgb(0 121 185);">
@@ -69,8 +91,8 @@ include '../functions/APICaller.php';
                 }
 
                 echo '</tbody></table>';
-            }
-            else  echo '<h4 class="mb-3">Se debe ingresar un año mayor o igual a 0 y, con menos de 5 digitos.</h4>';
+            
+        
 
 
         }    

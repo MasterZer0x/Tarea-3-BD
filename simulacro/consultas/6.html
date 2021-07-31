@@ -1,0 +1,75 @@
+<?php include $_SERVER['DOCUMENT_ROOT'].'/include/navbar.html'; 
+include '../functions/APICaller.php';
+?>
+
+
+<body>
+    <div class="form-group mb-3 mt-3 w-50" style="text-align: center !important; margin-left: auto !important;margin-right: auto !important;">
+        <h4 class="mb-3">TOP 3 - Monedas mas populares</h4>
+        
+    </div>
+
+    <?php 
+    
+       
+        {
+           
+                
+                
+
+                $call = callAPI('GET', $URL_API.'/api/consultas/6/', false);
+                $response = json_decode($call, true);
+
+                
+                
+
+                echo '<table  style="width:100%" class="table table-hover"><thead>
+                    <tr style="color: rgb(0 121 185);">
+                    <th>ID</th>
+                    <th>Sigla</th>
+                    <th>Cantidad de posesiones</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                if (is_array($response)) // si hay respuesta
+                {
+                    if(count($response) != 0)
+                    {
+                        foreach ($response as &$valor)
+                        {
+                            echo '<tr>';
+                                echo '<th class="align-middle">'.$valor[2].'</th>';
+                                echo '<th class="align-middle">'.$valor[1].'</th>';   
+                                echo '<th class="align-middle">'.$valor[0].'</th>';   
+                                
+                                echo '</tr>';
+                        }
+                    }
+                    else
+                    {
+                    echo '<tr><td colspan=7 class="text-center"><h4>No se han encontrado usuarios.</h4></td></tr>';
+                    }
+                }
+                elseif ($response['message'] == 'message')
+                {
+                    echo $response['message'];
+                }     
+                else
+                {
+                    echo '<h4>No se han encontrado usuarios.</h4>';
+                }
+
+                echo '</tbody></table>';
+            
+        
+
+
+        }    
+    
+    ?>
+
+
+
+</body>
+    
+</html>

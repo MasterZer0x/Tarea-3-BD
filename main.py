@@ -2,6 +2,8 @@
 from flask import Flask
 from flask import jsonify
 from sqlalchemy.orm import session
+from sqlalchemy import func
+from sqlalchemy import desc
 from config import config
 from models import CuentaBancaria, PrecioMoneda, UsuarioTieneMoneda, db
 from models import Pais
@@ -462,10 +464,27 @@ def get_user_by_year(year):
     users_filtered = Usuario.query.filter(Usuario.fecha_registro >= base_year_string, Usuario.fecha_registro < next_year_string)
 
     usuarios = [ usuario.json() for usuario in users_filtered ] 
-    return jsonify(usuarios)
+    return jsonify(usuarios), 200
 
+
+@app.route(base_cons_dir+'3/<country>', methods=['GET'])
+def get_user_by_country(country):
+    users_filtered = Usuario.query.filter(Usuario.pais == int(country))
+    pais = Pais.query.filter(Pais.cod_pais == int(country)).first()
+
+    respuesta = {"usuarios":[ usuario.json() for usuario in users_filtered ], "pais":pais.nombre}
+    return jsonify(respuesta)
+
+@app.route(base_cons_dir+'6/', methods=['GET'])
+def get_monedas_top():
+
+    monedas = [moneda.json() for moneda in Moneda.query.all()]
+    contados = []
+    for m in monedas:
+        contados.append((UsuarioTieneMoneda.query.filter(UsuarioTieneMoneda.id_moneda == m["id"]).count(),m["nombre"],m["sigla"]))
+    contados.sort(reverse=True)
+    return jsonify(contados[:3]), 200
     
-
 
 
 
