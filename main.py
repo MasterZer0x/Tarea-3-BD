@@ -464,6 +464,10 @@ def get_user_by_year(year):
     users_filtered = Usuario.query.filter(Usuario.fecha_registro >= base_year_string, Usuario.fecha_registro < next_year_string)
 
     usuarios = [ usuario.json() for usuario in users_filtered ] 
+
+    if len(usuarios) == 0:
+        return jsonify({'message': 'No se han encontrado usuarios para el año ingresado'}), 400
+
     return jsonify(usuarios), 200
 
 
@@ -475,6 +479,20 @@ def get_user_by_country(country):
     respuesta = {"usuarios":[ usuario.json() for usuario in users_filtered ], "pais":pais.nombre}
     return jsonify(respuesta)
 
+
+
+@app.route(base_cons_dir+'4/<id_moneda>', methods=['GET'])
+def get_max_by_coin(id_moneda):
+    result = PrecioMoneda.query.filter(PrecioMoneda.id_moneda == id_moneda).order_by(desc(PrecioMoneda.valor)).limit(1)
+    resultados = [ preciomoneda.json() for preciomoneda in result ] 
+
+    if len(resultados) == 0:
+        return jsonify({'message': 'No se han encontrado valores para la id_moneda dado.'}), 400
+
+    return jsonify(resultados), 200
+
+
+
 @app.route(base_cons_dir+'6/', methods=['GET'])
 def get_monedas_top():
 
@@ -485,6 +503,21 @@ def get_monedas_top():
     contados.sort(reverse=True)
     return jsonify(contados[:3]), 200
     
+
+
+
+
+@app.route(base_cons_dir+'8/<user_id>', methods=['GET'])
+def get_max_money_by_user(user_id):
+    
+    users_filtered = UsuarioTieneMoneda.query.filter(UsuarioTieneMoneda.id_usuario == user_id).order_by(desc(UsuarioTieneMoneda.balance)).limit(1)
+
+    valores = [ usuario.json() for usuario in users_filtered ] 
+
+    if len(valores) == 0:
+        return jsonify({'message': 'No se han encontrado monedas par el usuario dado.'}), 400
+
+    return jsonify(valores), 200
 
 
 
