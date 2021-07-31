@@ -42,9 +42,13 @@ $pais_response_arr = json_decode($pais_response , true);
 
                 $call = callAPI('GET', $URL_API.'/api/consultas/3/'.$_POST['country'], false);
                 $response = json_decode($call, true);
-
-                $pais = $response['pais'];
-                $response = $response['usuarios'];
+		
+		if(array_key_exists('pais', $response) && array_key_exists('usuarios', $response))
+		{
+                	$pais = $response['pais'];
+                	$response = $response['usuarios'];
+		}
+		else $pais = -1;
                 echo '<h4 class="mb-3">Resultados de pais '.$pais.': </h4>';
 
                 echo '<table  style="width:100%" class="table table-hover"><thead>
@@ -61,8 +65,10 @@ $pais_response_arr = json_decode($pais_response , true);
                 <tbody>';
                 if (is_array($response)) // si hay respuesta
                 {
-                    if(count($response) != 0)
-                    {
+		    if (array_key_first($response) == 'message') echo '<tr><td colspan=7 class="text-center"><h4>'.$response['message'] .'</h4></td></tr>';
+		    else
+		    {
+                    
                         foreach ($response as &$valor)
                         {
                             echo '<tr>';
@@ -75,10 +81,6 @@ $pais_response_arr = json_decode($pais_response , true);
                                 echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
                                 echo '</tr>';
                         }
-                    }
-                    else
-                    {
-                    echo '<tr><td colspan=7 class="text-center"><h4>No se han encontrado usuarios.</h4></td></tr>';
                     }
                 }
                 elseif ($response['message'] == 'message')
