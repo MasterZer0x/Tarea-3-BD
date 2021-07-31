@@ -517,6 +517,19 @@ def get_max_by_coin(id_moneda):
     return jsonify(resultados), 200
 
 
+@app.route(base_cons_dir+'5/<id>', methods=['GET'])
+def get_total_moneda(id):
+    resultados = UsuarioTieneMoneda.query.with_entities(
+             func.sum(UsuarioTieneMoneda.balance).label("Suma")
+         ).filter_by(
+             id_moneda=id
+         ).first()
+    print(resultados[0])
+    if (resultados[0] == None) :
+        return {'message': 'No hay monedas que sumar.'}
+    return {'Suma': resultados[0]},200
+
+
 
 @app.route(base_cons_dir+'6/', methods=['GET'])
 def get_monedas_top():
