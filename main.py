@@ -466,6 +466,13 @@ def get_user_by_year(year):
     usuarios = [ usuario.json() for usuario in users_filtered ] 
     return jsonify(usuarios), 200
 
+@app.route(base_cons_dir+'2/<balance>', methods=['GET'])
+def get_accounts_by_balance(balance):
+
+    accounts_filtered = CuentaBancaria.query.filter(CuentaBancaria.balance >= float(balance))
+
+    CuentaBancaria = [ CuentaBancaria.json() for CuentaBancaria in accounts_filtered ] 
+    return jsonify(CuentaBancaria), 200
 
 @app.route(base_cons_dir+'3/<country>', methods=['GET'])
 def get_user_by_country(country):
