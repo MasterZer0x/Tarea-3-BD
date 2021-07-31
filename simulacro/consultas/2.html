@@ -18,39 +18,31 @@ include '../functions/APICaller.php';
     
         if (isset($_POST['balance']))
         {
-            if ($_POST['balance'] >= 0 && $_POST['balance'] <= 9999)
+            if ($_POST['balance'] >= 0)
             {
                 echo '<h4 class="mb-3">Resultados Cuentas con balance > '.$balance.': </h4>';
 
-                $call = callAPI('GET', $URL_API.'/api/consultas/1/'.$_POST['balance'], false);
+                $call = callAPI('GET', $URL_API.'/api/consultas/2/'.$_POST['balance'], false);
                 $response = json_decode($call, true);
 
                 echo '<table  style="width:100%" class="table table-hover"><thead>
                     <tr style="color: rgb(0 121 185);">
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Correo</th>
-                    <th>Contraseña</th>
-                    <th>Pais</th>
-                    <th>Fecha registro</th>
+                    <th>Cuenta bancaria</th>
+                    <th>ID Usuario</th>
+                    <th>Balance</th>
                     </tr>
                 </thead>
                 <tbody>';
-                if(is_array($response) && !(array_key_first($response) == 'message')) // si hay respuesta
+                if(is_array($response) && !(array_key_exists("message",$response))) // si hay respuesta
                 {
                     if(count($response) != 0)
                     {
                         foreach ($response as &$valor)
                         {
                             echo '<tr>';
-                                echo '<th class="align-middle">'.$valor['id'].'</th>';
-                                echo '<th class="align-middle">'.$valor['nombre'].'</th>';   
-                                echo '<th class="align-middle">'.$valor['apellido'].'</th>';   
-                                echo '<th class="align-middle">'.$valor['correo'].'</th>';   
-                                echo '<th class="align-middle">'.$valor['contrasena'].'</th>';   
-                                echo '<th class="align-middle">'.$valor['pais'].'</th>';   
-                                echo '<th class="align-middle">'.$valor['fecha_registro'].'</th>';
+                                echo '<th class="align-middle">'.$valor['id_usuario'].'</th>';
+                                echo '<th class="align-middle">'.$valor['numero_cuenta'].'</th>';   
+                                echo '<th class="align-middle">'.$valor['balance'].'</th>';   
                                 echo '</tr>';
                         }
                     }
@@ -59,7 +51,7 @@ include '../functions/APICaller.php';
                     echo '<tr><td colspan=7 class="text-center"><h4>No se han encontrado usuarios.</h4></td></tr>';
                     }
                 }
-                elseif (array_key_first($response) == 'message')
+                elseif (array_key_exists("message",$response))
                 {
                     echo $response['message'];
                 }     

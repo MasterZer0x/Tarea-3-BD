@@ -31,7 +31,7 @@ include '../functions/APICaller.php';
                     </tr>
                 </thead>
                 <tbody>';
-                if(is_array($response) && !(array_key_first($response) == 'message')) // si hay respuesta
+                if(is_array($response) && !(array_key_exists("message",$response))) // si hay respuesta
                 {
 
                         foreach ($response as &$valor)
@@ -44,7 +44,7 @@ include '../functions/APICaller.php';
                         }
 
                 }
-                elseif (array_key_first($response) == 'message')
+                elseif (array_key_exists("message",$response))
                 {
                     echo '<tr><td colspan=7 class="text-center"><h4>'.$response['message'] .'</h4></td></tr>';
                 }     

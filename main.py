@@ -4,6 +4,7 @@ from flask import jsonify
 from sqlalchemy.orm import session
 from sqlalchemy import func
 from sqlalchemy import extract
+from sqlalchemy import desc
 from config import config
 from models import CuentaBancaria, PrecioMoneda, UsuarioTieneMoneda, db
 from models import Pais
@@ -477,13 +478,18 @@ def get_user_by_year(year):
 
     return jsonify(usuarios), 200
 
+    
 @app.route(base_cons_dir+'2/<balance>', methods=['GET'])
 def get_accounts_by_balance(balance):
 
     accounts_filtered = CuentaBancaria.query.filter(CuentaBancaria.balance >= float(balance))
 
-    CuentaBancaria = [ CuentaBancaria.json() for CuentaBancaria in accounts_filtered ] 
-    return jsonify(CuentaBancaria), 200
+    cuentabancaria = [ CuentaBancaria.json() for CuentaBancaria in accounts_filtered ] 
+    if len(cuentabancaria) == 0:
+        return jsonify({'message': 'No se han encontrado cuentas a ingresar.'}), 400
+
+    return jsonify(cuentabancaria), 200
+
 
 @app.route(base_cons_dir+'3/<country>', methods=['GET'])
 def get_user_by_country(country):
